@@ -32,8 +32,23 @@ class Database
                     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                     PDO::ATTR_EMULATE_PREPARES   => false,
-                    PDO::ATTR_PERSISTENT         => false, // Set to false to prevent connection pooling issues
+                    PDO::ATTR_PERSISTENT         => false,
                 ];
+
+                // Add SSL configuration if SSL_CA is set
+                $sslCa = $_ENV['DB_SSL_CA'] ?? null;
+                if ($sslCa) {
+                    $sslCaPath = realpath($sslCa);
+                    if ($sslCaPath === false) {
+                        error_log("Warning: SSL CA file not found at: {$sslCa}");
+                    } else {
+                        $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCaPath;
+                        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = true;
+                        error_log("Using SSL with CA: {$sslCaPath}");
+                    }
+                } else {
+                    error_log("No SSL CA file specified, using unencrypted connection");
+                }
                 
                 // Add error reporting for debugging
                 error_log("Attempting to connect to MySQL: {$host}:{$port}");

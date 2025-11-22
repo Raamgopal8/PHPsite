@@ -28,7 +28,27 @@
 
         <!-- Login Form -->
         <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-white/20">
-            <form action="/login" method="post" class="space-y-6">
+            <form action="/login" method="post" class="space-y-6" onsubmit="return validateEmailDomain()">
+                <script>
+                    function validateEmailDomain() {
+                        const email = document.getElementById('email').value;
+                        const emailError = document.getElementById('email-error');
+                        const isValid = /^[a-zA-Z0-9._%+-]+@(ksrce\.ac\.in|ksriet\.ac\.in)$/.test(email);
+                        
+                        if (!isValid) {
+                            emailError.classList.remove('hidden');
+                            return false;
+                        }
+                        emailError.classList.add('hidden');
+                        return true;
+                    }
+                    
+                    // Also validate on input change to give immediate feedback
+                    document.getElementById('email').addEventListener('input', function() {
+                        const emailError = document.getElementById('email-error');
+                        emailError.classList.add('hidden');
+                    });
+                </script>
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                     <div class="relative">
@@ -39,7 +59,10 @@
                         </div>
                         <input type="email" id="email" name="email" required 
                             class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200"
-                            placeholder="you@example.com" autocomplete="username">
+                            placeholder="you@ksrce.ac.in" autocomplete="username"
+                            pattern="^[a-zA-Z0-9._%+-]+@(ksrce\.ac\.in|ksriet\.ac\.in)$"
+                            title="Please use your ksrce.ac.in or ksriet.ac.in email address">
+                        <div id="email-error" class="mt-1 text-sm text-red-600 hidden">Please use your ksrce.ac.in or ksriet.ac.in email address</div>
                     </div>
                 </div>
 

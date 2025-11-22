@@ -2,8 +2,11 @@
 namespace App\Models;
 
 class Achiever extends BaseModel {
-    protected $collection = 'achievers';
-    public function __construct($db) { parent::__construct($db); }
+    protected $table = 'achievers';
+    
+    public function __construct($db) {
+        parent::__construct($db);
+    }
 
     public function add($name, $exam, $rank, $photo = null) {
         return $this->insert([

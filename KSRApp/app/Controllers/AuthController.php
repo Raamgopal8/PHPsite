@@ -16,7 +16,25 @@ class AuthController extends Controller {
         $user = $userModel->verify($email, $password);
         if ($user) {
             // store minimal user in session
-            $_SESSION['user'] = ['_id' => (string)$user['_id'], 'name'=>$user['name'], 'email'=>$user['email'], 'role'=>$user['role']];
+            $_SESSION['user'] = ['id' => (string)$user['id'], 'name'=>$user['name'], 'email'=>$user['email'], 'role'=>$user['role']];
+            
+            // Log the login event
+            try {
+                $sessionId = session_id();
+                if (!$sessionId) {
+                    session_start();
+                    $sessionId = session_id();
+                }
+                
+                $stmt = $db->prepare("INSERT INTO login_logs (user_id, ip_address, user_agent, session_id) VALUES (?, ?, ?, ?)");
+                $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+                $agent = $_SERVER['HTTP_USER_AGENT'] ?? null;
+                $stmt->execute([$user['id'], $ip, $agent, $sessionId]);
+            } catch (\Exception $e) {
+                // Silently fail logging to not prevent login
+                error_log("Login logging failed: " . $e->getMessage());
+            }
+
             if ($user['role'] === 'admin') {
                 $this->redirect('/admin/dashboard');
             } else {
@@ -47,6 +65,18 @@ class AuthController extends Controller {
     }
 
     public function logout() {
+        // Record logout time
+        try {
+            $sessionId = session_id();
+            if ($sessionId) {
+                $db = $this->db;
+                $stmt = $db->prepare("UPDATE login_logs SET logout_time = CURRENT_TIMESTAMP WHERE session_id = ?");
+                $stmt->execute([$sessionId]);
+            }
+        } catch (\Exception $e) {
+            error_log("Logout logging failed: " . $e->getMessage());
+        }
+
         session_destroy();
         $this->redirect('/login');
     }

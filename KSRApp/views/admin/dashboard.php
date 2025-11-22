@@ -14,14 +14,9 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
-                        Create New Exam
+                        Create Exams
                     </a>
-                    <a href="/admin/questions/add" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Add Question
-                    </a>
+
                 </div>
             </div>
 
@@ -97,6 +92,27 @@
                 </div>
             </div>
         </div>
+        <!-- Domain Selection -->
+        <div class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Choose Your Domain</h2>
+            <div class="flex flex-wrap gap-3">
+              
+                <a href="/student/gate" class="px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    GATE
+                </a>
+              
+                <a href="/student/tnpsc" class="px-4 py-2 rounded-full bg-green-100 text-green-700 text-sm font-medium hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    TNPSC
+                </a>
+               
+              </div>
+        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Exams List -->
@@ -122,10 +138,182 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="text-sm text-gray-500"><?= $exam['duration'] ?? 30 ?> min</span>
-                                    <a href="/admin/exams/view/<?= $exam['_id'] ?>" class="block text-sm font-medium text-blue-600 hover:text-blue-500 mt-1">View</a>
+                                    <div class="flex items-center space-x-3 mt-2">
+                                        <a href="/admin/exams/view/<?= urlencode($exam['id'] ?? '') ?>" class="text-sm font-medium text-blue-600 hover:text-blue-500">View</a>
+                                    </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Syllabus Management -->
+            <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Syllabus Management</h2>
+                    <a href="/admin/syllabi" class="text-sm font-medium text-blue-600 hover:text-blue-500">View All</a>
+                </div>
+                <div class="space-y-4">
+                    <?php 
+                    $recentSyllabi = [];
+                    try {
+                        $db = $this->db ?? (new \App\Core\App())->db;
+                        $stmt = $db->prepare("SELECT * FROM syllabi ORDER BY created_at DESC LIMIT 5");
+                        $stmt->execute();
+                        $recentSyllabi = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    } catch (Exception $e) {
+                        // Silently fail if table doesn't exist yet
+                    }
+                    ?>
+                    <?php if (empty($recentSyllabi)): ?>
+                        <div class="text-center py-8">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-500">No syllabus links added</p>
+                            <a href="/admin/syllabi/create" class="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                                Add Syllabus Link
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach($recentSyllabi as $syllabus): ?>
+                            <div class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-shadow duration-200">
+                                <div>
+                                    <h3 class="font-medium text-gray-900"><?= htmlspecialchars($syllabus['title']) ?></h3>
+                                    <p class="text-sm text-gray-500">Subject: <?= htmlspecialchars($syllabus['subject']) ?></p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-400"><?= date('M d', strtotime($syllabus['created_at'])) ?></span>
+                                    <div class="flex items-center space-x-3 mt-2">
+                                        <a href="/admin/syllabi/<?= $syllabus['id'] ?>" class="text-sm font-medium text-blue-600 hover:text-blue-500">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                        <div class="pt-2">
+                            <a href="/admin/syllabi/create" class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Add New Link
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Materials Management -->
+            <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Materials Management</h2>
+                    <a href="/admin/materials" class="text-sm font-medium text-blue-600 hover:text-blue-500">View All</a>
+                </div>
+                <div class="space-y-4">
+                    <?php 
+                    $recentMaterials = [];
+                    try {
+                        $db = $this->db ?? (new \App\Core\App())->db;
+                        $stmt = $db->prepare("SELECT * FROM materials ORDER BY created_at DESC LIMIT 5");
+                        $stmt->execute();
+                        $recentMaterials = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    } catch (Exception $e) {
+                        // Silently fail if table doesn't exist yet
+                    }
+                    ?>
+                    <?php if (empty($recentMaterials)): ?>
+                        <div class="text-center py-8">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-500">No material links added</p>
+                            <a href="/admin/materials/create" class="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                                Add Material Link
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach($recentMaterials as $material): ?>
+                            <div class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-shadow duration-200">
+                                <div>
+                                    <h3 class="font-medium text-gray-900"><?= htmlspecialchars($material['title']) ?></h3>
+                                    <p class="text-sm text-gray-500">Category: <?= htmlspecialchars($material['category']) ?></p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-400"><?= date('M d', strtotime($material['created_at'])) ?></span>
+                                    <div class="flex items-center space-x-3 mt-2">
+                                        <a href="/admin/materials/<?= $material['id'] ?>" class="text-sm font-medium text-green-600 hover:text-green-500">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                        <div class="pt-2">
+                            <a href="/admin/materials/create" class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Add New Material
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Student Login Activity -->
+            <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Recent Student Logins</h2>
+                </div>
+                <div class="space-y-4">
+                    <?php 
+                    $recentLogins = [];
+                    try {
+                        $db = $this->db ?? (new \App\Core\App())->db;
+                        $stmt = $db->prepare("
+                            SELECT l.*, u.name, u.email 
+                            FROM login_logs l 
+                            JOIN users u ON l.user_id = u.id 
+                            ORDER BY l.login_time DESC 
+                            LIMIT 5
+                        ");
+                        $stmt->execute();
+                        $recentLogins = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    } catch (Exception $e) {
+                        // Silently fail if table doesn't exist yet
+                    }
+                    ?>
+                    <?php if (empty($recentLogins)): ?>
+                        <div class="text-center py-8">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-500">No recent login activity</p>
+                        </div>
+                    <?php else: ?>
+                        <div class="overflow-hidden">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Login Time</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logout Time</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-logins-body" class="bg-white divide-y divide-gray-200">
+                                    <?php foreach($recentLogins as $login): ?>
+                                        <tr>
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-900"><?= htmlspecialchars($login['name']) ?></div>
+                                                <div class="text-xs text-gray-500"><?= htmlspecialchars($login['email']) ?></div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                <?= date('M d, H:i', strtotime($login['login_time'])) ?>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                <?= $login['logout_time'] ? date('M d, H:i', strtotime($login['logout_time'])) : '<span class="text-green-600 text-xs font-medium bg-green-100 px-2 py-0.5 rounded-full">Active</span>' ?>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                <?= htmlspecialchars($login['ip_address'] ?? 'N/A') ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -139,23 +327,24 @@
                 <div class="space-y-4">
                     <?php if (empty($achievers)): ?>
                         <div class="text-center py-8">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                            </svg>
-                            <p class="mt-2 text-sm text-gray-500">No achievement records yet</p>
+                            <p class="mt-2 text-sm text-gray-500">No achievers yet</p>
                         </div>
                     <?php else: ?>
                         <?php foreach($achievers as $achiever): ?>
-                            <div class="flex items-center p-4 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-shadow duration-200">
-                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-medium">
-                                    <?= strtoupper(substr($achiever['name'] ?? 'U', 0, 1)) ?>
+                            <div class="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100">
+                                <div class="flex items-center">
+                                    <div class="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 font-bold">
+                                        <?= substr($achiever['user_name'], 0, 1) ?>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h3 class="font-medium text-gray-900"><?= htmlspecialchars($achiever['user_name']) ?></h3>
+                                        <p class="text-sm text-gray-500"><?= htmlspecialchars($achiever['exam_title']) ?></p>
+                                    </div>
                                 </div>
-                                <div class="ml-4 flex-1">
-                                    <h3 class="font-medium text-gray-900"><?= htmlspecialchars($achiever['name']) ?></h3>
-                                    <p class="text-sm text-gray-500"><?= htmlspecialchars($achiever['exam']) ?></p>
-                                </div>
-                                <div class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
-                                    Rank #<?= $achiever['rank'] ?>
+                                <div class="text-right">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <?= $achiever['score'] ?>%
+                                    </span>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -163,8 +352,54 @@
                 </div>
             </div>
         </div>
+<script>
+function updateRecentLogins() {
+    fetch('/admin/api/recent-logins')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('recent-logins-body');
+            if (!tbody) return;
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-3 text-center text-sm text-gray-500">No recent login activity</td></tr>';
+                return;
+            }
 
-        <!-- Real-time Student Scores Section -->
+            tbody.innerHTML = data.map(login => `
+                <tr>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${escapeHtml(login.name)}</div>
+                        <div class="text-xs text-gray-500">${escapeHtml(login.email)}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                        ${login.formatted_time}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                        ${login.formatted_logout !== 'Active' ? login.formatted_logout : '<span class="text-green-600 text-xs font-medium bg-green-100 px-2 py-0.5 rounded-full">Active</span>'}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                        ${escapeHtml(login.ip_address || 'N/A')}
+                    </td>
+                </tr>
+            `).join('');
+        })
+        .catch(error => console.error('Error fetching logins:', error));
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// Update every 60 seconds
+setInterval(updateRecentLogins, 60000);
+</script>
+<!-- Real-time Student Scores Section -->
        <div class="mt-8">
     <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm">
         <div class="flex items-center justify-between mb-6">

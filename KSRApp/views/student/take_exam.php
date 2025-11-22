@@ -33,7 +33,7 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
 
         <!-- Exam Form -->
         <form id="examForm" action="/exam/submit" method="post" class="space-y-6">
-            <input type="hidden" name="exam_id" value="<?= htmlspecialchars($exam['_id']) ?>">
+            <input type="hidden" name="exam_id" value="<?= htmlspecialchars($exam['id']) ?>">
             
             <?php foreach($questions as $i => $q): ?>
                 <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -42,11 +42,11 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
                             <?= $i + 1 ?>
                         </div>
                         <div class="ml-4 flex-1">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4"><?= htmlspecialchars($q['text']) ?></h3>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4"><?= htmlspecialchars($q['text'] ?? $q['question_text'] ?? '') ?></h3>
                             <div class="space-y-3">
-                                <?php foreach($q['options'] as $k => $opt): ?>
+                                <?php foreach((is_array($q['options']) ? $q['options'] : []) as $k => $opt): ?>
                                     <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-200">
-                                        <input type="radio" name="answers[<?= htmlspecialchars($q['_id']) ?>]" value="<?= $k ?>" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                        <input type="radio" name="answers[<?= htmlspecialchars($q['id']) ?>]" value="<?= $k ?>" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                         <span class="ml-3 text-gray-700"><?= htmlspecialchars($opt) ?></span>
                                     </label>
                                 <?php endforeach; ?>

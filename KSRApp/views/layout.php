@@ -6,7 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Portal</title>
+    <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
+    <title>CCE Portal</title>
     <link rel="stylesheet" href="/assets/css/app.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
@@ -74,7 +75,7 @@
                         <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 01.287.22l4 4a1 1 0 11-1.414 1.414l-3.736-3.737-6.9 4.5a1 1 0 11-1.1-1.684l7-4.5a1 1 0 011.1 0l4.5 2.5a1 1 0 11-1 1.732l-3.5-1.945-5.5 3.5a1 1 0 01-1.5-.866V6.3a1 1 0 01.6-.9l7-3a1 1 0 01.1-.32z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">ExamPortal</span>
+                <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">KSRCE CCE</span>
             </a>
 
             <!-- Desktop Navigation -->

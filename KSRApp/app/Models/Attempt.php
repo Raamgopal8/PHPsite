@@ -2,14 +2,14 @@
 namespace App\Models;
 
 class Attempt extends BaseModel {
-    protected $collection = 'attempts';
+    protected $table = 'attempts';
     public function __construct($db) { parent::__construct($db); }
 
     public function createAttempt($userId, $examId, $answers, $score) {
         $doc = [
             'user_id' => $userId,
             'exam_id' => $examId,
-            'answers' => $answers,
+            'answers' => json_encode($answers),
             'score' => $score,
             'submitted_at' => date('c')
         ];

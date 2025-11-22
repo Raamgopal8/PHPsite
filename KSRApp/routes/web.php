@@ -1,5 +1,37 @@
-// In your routes file (e.g., routes/web.php)
-Route::get('/admin/api/scores/stream', 'AdminController@streamScores');
+// Admin routes
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function() use ($router) {
+    // Existing routes...
+    
+    // Dashboard route
+    Route::get('/dashboard', 'AdminController@dashboard');
+    
+    // MCQ Management Routes removed as per requirements
+    // Exam Management Routes
+    Route::get('/exams', 'ExamController@index');
+    Route::get('/exams/manage', 'ExamController@manage');
+    Route::get('/exams/manage/{id}', 'ExamController@manage');
+    Route::post('/exams/save', 'ExamController@save');
+    Route::post('/exams/parse-questions', 'ExamController@parseQuestions');
+
+    // Syllabus Management Routes
+    Route::get('/admin/exams/{id}/syllabus', 'SyllabusController@uploadForm');
+    Route::post('/admin/syllabus/upload', 'SyllabusController@upload');
+    Route::get('/admin/syllabus/view/{id}', 'SyllabusController@viewSyllabus');
+    Route::get('/student/exams/{id}/syllabus', 'SyllabusController@studentView');
+     
+    // Question management routes
+    $router->post('/api/questions/upload-text', 'QuestionController@handleTextFileUpload');
+    $router->post('/api/questions/save-parsed', 'QuestionController@saveParsedQuestions');
+    $router->get('/api/exams', 'QuestionController@getExams');
+    
+    // Legacy routes (keep for backward compatibility, can be removed later)
+    Route::get('/questions', 'QuestionController@index');
+    Route::get('/questions/add', 'QuestionController@showAddForm');
+    Route::post('/questions/add', 'QuestionController@addQuestion');
+    
+    // Existing API routes
+    Route::get('/api/scores/stream', 'AdminController@streamScores');
+});
 
 // In your AdminController.php
 public function streamScores() {

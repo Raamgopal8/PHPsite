@@ -2,9 +2,11 @@
 namespace App\Models;
 
 class User extends BaseModel {
-    protected $collection = 'users';
+    protected $table = 'users';
 
-    public function __construct($db) { parent::__construct($db); }
+    public function __construct($db) { 
+        parent::__construct($db);
+    }
 
     public function create($name, $email, $password, $role='student') {
         $doc = [

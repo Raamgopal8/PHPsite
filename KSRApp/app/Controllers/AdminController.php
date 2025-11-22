@@ -12,7 +12,7 @@ class AdminController extends Controller {
         }
         $exams = (new Exam($this->db))->all();
     $achievers = (new Achiever($this->db))->all();
-    $resultModel = new \App\Models\Result();
+    $resultModel = new \App\Models\Result($this->db);
     $recentResults = $resultModel->getResults([], 1, 10); // Get first 10 results
 
     // Pass all data to the view at once
@@ -25,6 +25,39 @@ class AdminController extends Controller {
     
     }
 
+    public function getRecentLogins() {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+
+        try {
+            $stmt = $this->db->prepare("
+                SELECT l.*, u.name, u.email 
+                FROM login_logs l 
+                JOIN users u ON l.user_id = u.id 
+                ORDER BY l.login_time DESC 
+                LIMIT 5
+            ");
+            $stmt->execute();
+            $logs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Format date for frontend
+            foreach ($logs as &$log) {
+                $log['formatted_time'] = date('M d, H:i', strtotime($log['login_time']));
+                $log['formatted_logout'] = $log['logout_time'] ? date('M d, H:i', strtotime($log['logout_time'])) : 'Active';
+            }
+            
+            header('Content-Type: application/json');
+            echo json_encode($logs);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
     public function createExam() {
         $this->view('admin/exams_create.php');
     }
@@ -33,8 +66,27 @@ class AdminController extends Controller {
         $title = $_POST['title'] ?? '';
         $category = $_POST['category'] ?? '';
         $duration = $_POST['duration'] ?? 60;
-        (new Exam($this->db))->createExam($title,$category,$duration,[]);
-        $_SESSION['flash']['success'] = "Exam created.";
+        $questions = $_POST['questions'] ?? [];
+        
+        $examModel = new Exam($this->db);
+        $examId = $examModel->createExam($title, $category, $duration, []);
+        
+        if ($examId && !empty($questions)) {
+            $questionModel = new Question($this->db);
+            foreach ($questions as $q) {
+                if (empty($q['text']) || empty($q['options'])) continue;
+                
+                $questionModel->createQuestion(
+                    $examId,
+                    $q['text'],
+                    $q['options'],
+                    (int)($q['correct_answer'] ?? 0),
+                    $q['explanation'] ?? ''
+                );
+            }
+        }
+        
+        $_SESSION['flash']['success'] = "Exam created successfully.";
         $this->redirect('/admin/dashboard');
     }
 
