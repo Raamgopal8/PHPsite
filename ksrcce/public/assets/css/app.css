@@ -1,0 +1,6 @@
+body { font-family: Arial, sans-serif; padding: 20px; }
+nav a { margin-right: 10px; }
+.container { max-width: 700px; margin: 10px auto; }
+.error { color: #b00020; }
+.success { color: #007b00; }
+.question { border-bottom: 1px solid #eee; padding: 10px 0; }
