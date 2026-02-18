@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Core\Controller;
 use App\Models\Result;
 
 class ResultController extends Controller
@@ -10,25 +11,63 @@ class ResultController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->resultModel = new Result();
+        $this->resultModel = new Result($this->db);
+    }
+// ...
+    public function adminResults()
+    {
+        try {
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+            
+            $filters = [
+                'student_id' => $_GET['student_id'] ?? null,
+                'exam_id' => $_GET['exam_id'] ?? null,
+                'status' => $_GET['status'] ?? null
+            ];
+
+            $results = $this->resultModel->getResults($filters, $page, $limit);
+            
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'data' => $results['data'],
+                'pagination' => [
+                    'total' => $results['total'],
+                    'page' => $results['page'],
+                    'limit' => $results['limit'],
+                    'total_pages' => $results['total_pages']
+                ]
+            ]);
+        } catch (\Exception $e) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to fetch results: ' . $e->getMessage()
+            ]);
+        }
     }
 
     public function saveResult()
     {
-        $data = $this->request->getJSON(true);
+        $data = json_decode(file_get_contents('php://input'), true);
         
         try {
             $result = $this->resultModel->saveResult($data);
-            return $this->response->setJSON([
+            header('Content-Type: application/json');
+            echo json_encode([
                 'success' => true,
                 'message' => 'Result saved successfully',
-                'data' => ['id' => (string)$result->getInsertedId()]
-            ]);
+                'data' => ['id' => (string)$this->db->lastInsertId()] 
+            ]); // Result::saveResult returns insert return value (bool/stmt), not ID object, assume usage of lastInsertId
         } catch (\Exception $e) {
-            return $this->response->setJSON([
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
                 'success' => false,
                 'message' => 'Failed to save result: ' . $e->getMessage()
-            ], 500);
+            ]);
         }
     }
 
@@ -36,15 +75,18 @@ class ResultController extends Controller
     {
         try {
             $results = $this->resultModel->getResultsByStudent($studentId);
-            return $this->response->setJSON([
+            header('Content-Type: application/json');
+            echo json_encode([
                 'success' => true,
                 'data' => $results
             ]);
         } catch (\Exception $e) {
-            return $this->response->setJSON([
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
                 'success' => false,
                 'message' => 'Failed to fetch results: ' . $e->getMessage()
-            ], 500);
+            ]);
         }
     }
 
@@ -52,94 +94,52 @@ class ResultController extends Controller
     {
         try {
             $results = $this->resultModel->getResultsByExam($examId);
-            return $this->response->setJSON([
+            header('Content-Type: application/json');
+            echo json_encode([
                 'success' => true,
                 'data' => $results
             ]);
         } catch (\Exception $e) {
-            return $this->response->setJSON([
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
                 'success' => false,
                 'message' => 'Failed to fetch exam results: ' . $e->getMessage()
-            ], 500);
+            ]);
         }
     }
 
     public function getTopResults()
     {
-        $limit = $this->request->getGet('limit') ?? 10;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         
         try {
             $results = $this->resultModel->getTopResults($limit);
-            return $this->response->setJSON([
+            header('Content-Type: application/json');
+            echo json_encode([
                 'success' => true,
                 'data' => $results
             ]);
         } catch (\Exception $e) {
-            return $this->response->setJSON([
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
                 'success' => false,
                 'message' => 'Failed to fetch top results: ' . $e->getMessage()
-            ], 500);
+            ]);
         }
     }
     
     public function updates()
     {
-    header('Content-Type: text/event-stream');
-    header('Cache-Control: no-cache');
-    header('Connection: keep-alive');
-    
-    // Send a comment to keep the connection alive
-    echo ":" . str_repeat(" ", 2048) . "\n"; // 2KB padding for IE
-    echo "retry: 5000\n\n";
-    flush();
-
-    // This is a simplified example - in a real app, you'd check for new results
-    // and only send updates when there are changes
-    while (true) {
-        // Check for new results (you'll need to implement this logic)
-        // $newResults = $this->resultModel->getNewResultsSince($lastCheck);
-        
-        // For now, we'll just send a ping every 30 seconds
-        echo "data: " . json_encode([
+        // Return a simple JSON response instead of a blocking stream
+        header('Content-Type: application/json');
+        echo json_encode([
             'type' => 'ping',
             'time' => date('Y-m-d H:i:s')
-        ]) . "\n\n";
-        flush();
-        
-        // Wait for 30 seconds before sending the next update
-        sleep(30);
-    }
-    }
-
-public function adminResults()
-{
-    try {
-        $page = $this->request->getGet('page') ? (int)$this->request->getGet('page') : 1;
-        $limit = $this->request->getGet('limit') ? (int)$this->request->getGet('limit') : 10;
-        
-        $filters = [
-            'student_id' => $this->request->getGet('student_id'),
-            'exam_id' => $this->request->getGet('exam_id'),
-            'status' => $this->request->getGet('status')
-        ];
-
-        $results = $this->resultModel->getResults($filters, $page, $limit);
-        
-        return $this->response->setJSON([
-            'success' => true,
-            'data' => $results['data'],
-            'pagination' => [
-                'total' => $results['total'],
-                'page' => $results['page'],
-                'limit' => $results['limit'],
-                'total_pages' => $results['total_pages']
-            ]
         ]);
-    } catch (\Exception $e) {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Failed to fetch results: ' . $e->getMessage()
-        ], 500);
+        exit;
     }
-}
+
+
 }

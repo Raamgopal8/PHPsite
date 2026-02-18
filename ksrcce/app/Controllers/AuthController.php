@@ -26,7 +26,7 @@ class AuthController extends Controller {
                     $sessionId = session_id();
                 }
                 
-                $stmt = $db->prepare("INSERT INTO login_logs (user_id, ip_address, user_agent, session_id) VALUES (?, ?, ?, ?)");
+                $stmt = $db->prepare("INSERT INTO login_logs (user_id, ip_address, user_agent, session_id, last_activity) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)");
                 $ip = $_SERVER['REMOTE_ADDR'] ?? null;
                 $agent = $_SERVER['HTTP_USER_AGENT'] ?? null;
                 $stmt->execute([$user['id'], $ip, $agent, $sessionId]);
@@ -79,5 +79,27 @@ class AuthController extends Controller {
 
         session_destroy();
         $this->redirect('/login');
+    }
+
+    public function heartbeat() {
+        if (!isset($_SESSION['user'])) {
+            http_response_code(401);
+            exit;
+        }
+
+        try {
+            $sessionId = session_id();
+            if ($sessionId) {
+                // Update last_activity directly using PDO from Controller
+                $stmt = $this->db->prepare("UPDATE login_logs SET last_activity = CURRENT_TIMESTAMP WHERE session_id = ?");
+                $stmt->execute([$sessionId]);
+            }
+            echo json_encode(['status' => 'ok']);
+        } catch (\Exception $e) {
+            // Put silence is golden for heartbeats usually, or log it
+            error_log("Heartbeat failed: " . $e->getMessage());
+            echo json_encode(['status' => 'error']);
+        }
+        exit;
     }
 }

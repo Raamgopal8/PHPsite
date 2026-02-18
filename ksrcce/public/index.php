@@ -66,6 +66,11 @@ $routes = [
         '/login' => 'AuthController@login',
         '/register' => 'AuthController@register',
         '/logout' => 'AuthController@logout',
+        '/admin/password-view' => 'PasswordViewController@index',
+        '/admin/password-view/decrypt' => 'PasswordViewController@decryptSingle',
+        '/admin/password-view/export' => 'PasswordViewController@exportPasswords',
+        '/admin/setup' => 'AdminSetupController@index',
+        '/admin/setup/create' => 'AdminSetupController@createAdmin',
         '/student/dashboard' => 'ExamController@studentDashboard',
         '/student/exams' => 'ExamController@listExams',
         '/student/gate' =>'ExamController@showGatepage',
@@ -85,6 +90,27 @@ $routes = [
         '/student/gate/mba' => 'ExamController@showMBAPage',
         '/student/gate/mca' => 'ExamController@showMCAPage',
         '/student/tnpsc' => 'ExamController@showTnspcpage',
+        '/student/banking' => 'ExamController@showBankingPage',
+        '/student/upsc' => 'ExamController@showUPSCPage',
+        
+        // Banking Sub-routes
+        '/student/banking/ibps-po' => 'ExamController@showBankingIBPSPO',
+        '/student/banking/ibps-clerk' => 'ExamController@showBankingIBPSClerk',
+        '/student/banking/sbi-po' => 'ExamController@showBankingSBIPO',
+        '/student/banking/sbi-clerk' => 'ExamController@showBankingSBIClerk',
+        '/student/banking/rrb' => 'ExamController@showBankingRRB',
+        '/student/banking/rbi' => 'ExamController@showBankingRBI',
+
+        // UPSC Sub-routes
+        '/student/upsc/cse' => 'ExamController@showUPSCCSE',
+        '/student/upsc/ifos' => 'ExamController@showUPSCIFoS',
+        '/student/upsc/ese' => 'ExamController@showUPSCESE',
+        '/student/upsc/capf' => 'ExamController@showUPSCCAPF',
+        '/student/upsc/cds' => 'ExamController@showUPSCCDS',
+        '/student/upsc/nda' => 'ExamController@showUPSCNDA',
+        '/student/upsc/cms' => 'ExamController@showUPSCCMS',
+        '/student/upsc/geoscientist' => 'ExamController@showUPSCGeoscientist',
+
         '/student/tnpsc/group1' => 'ExamController@showGroup1page',
         '/student/tnpsc/group2' => 'ExamController@showGroup2page',
         '/student/tnpsc/group4' => 'ExamController@showGroup4page',
@@ -108,10 +134,26 @@ $routes = [
         '/admin/materials/{id}' => 'MaterialManagementController@show',
         '/admin/materials/{id}/delete' => 'MaterialManagementController@delete',
         '/materials' => 'MaterialController@list',
+        '/admin/exam-countdowns' => 'ExamCountdownController@index',
+        '/admin/achievements' => 'AchievementController@index',
+        // API endpoints
+        '/api/exam-countdowns' => 'ExamCountdownController@getCountdowns',
+        '/api/achievements' => 'AchievementController@getAchievements',
+        '/admin/api/recent-logins' => 'AdminController@getRecentLogins',
+        '/api/admin/results' => 'ResultController@adminResults',
+        '/api/updates' => 'ResultController@updates',
+        '/api/official-links' => 'OfficialLinkController@getLinks',
+        '/admin/official-links/delete/{id}' => 'OfficialLinkController@destroy',
+    '/api/heartbeat' => 'AuthController@heartbeat', // Heartbeat route
+
+        // Static Pages
+        '/privacy-policy' => 'PageController@privacy',
+        '/terms-of-service' => 'PageController@terms',
     ],
     'POST' => [
         '/login' => 'AuthController@postLogin',
         '/register' => 'AuthController@postRegister',
+        '/admin/setup/create' => 'AdminSetupController@createAdmin',
         '/exam/submit' => 'ExamController@submitExam',
         '/exam/submit' => 'ExamController@submitExam',
         '/admin/exams/create' => 'AdminController@postCreateExam',
@@ -123,9 +165,20 @@ $routes = [
         '/materials/upload' => 'MaterialController@upload',
         // API endpoints
         '/api/questions/parse' => 'QuestionController@parseQuestions',
-        '/admin/api/recent-logins' => 'AdminController@getRecentLogins',
         '/api/questions/save-parsed' => 'QuestionController@saveParsedQuestions',
-        '/api/exams' => 'QuestionController@getExams'
+        '/api/exams' => 'QuestionController@getExams',
+        // Exam Countdown API
+        '/api/exam-countdowns/create' => 'ExamCountdownController@create',
+        '/api/exam-countdowns/update' => 'ExamCountdownController@update',
+        '/api/exam-countdowns/delete' => 'ExamCountdownController@delete',
+        '/api/exam-countdowns/toggle' => 'ExamCountdownController@toggle',
+        // Achievement API
+        '/admin/achievements/create' => 'AchievementController@create',
+        '/admin/achievements/update' => 'AchievementController@update',
+        '/api/achievements/delete' => 'AchievementController@delete',
+        '/api/achievements/toggle' => 'AchievementController@toggleStatus',
+        '/api/achievements/featured' => 'AchievementController@toggleFeatured',
+        '/admin/official-links/store' => 'OfficialLinkController@store'
     ]
 ];
 

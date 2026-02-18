@@ -53,15 +53,12 @@ class Result extends BaseModel
         $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
         
         // Get paginated results
-        $sql = "SELECT * FROM {$this->table} $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?";
-        $resultParams = $params;
-        $resultParams[] = $limit;
-        $resultParams[] = $offset;
-        
+        // Get paginated results
+        $sql = "SELECT * FROM {$this->table} $whereClause ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
         $stmt = $this->db->prepare($sql);
         
         // Bind parameters with their types
-        foreach ($resultParams as $i => $param) {
+        foreach ($params as $i => $param) {
             $paramType = isset($paramTypes[$i]) ? $paramTypes[$i] : \PDO::PARAM_STR;
             $stmt->bindValue($i + 1, $param, $paramType);
         }

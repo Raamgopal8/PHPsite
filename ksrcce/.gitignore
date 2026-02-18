@@ -5,4 +5,3 @@
 /storage/sessions/*
 !/storage/sessions/.gitkeep
 debug_logs.php
-ca.pem

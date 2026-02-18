@@ -29,6 +29,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function() use ($rou
     Route::get('/questions/add', 'QuestionController@showAddForm');
     Route::post('/questions/add', 'QuestionController@addQuestion');
     
+    // Official Links Routes
+    Route::post('/admin/official-links/store', 'OfficialLinkController@store');
+    Route::get('/admin/official-links/delete/{id}', 'OfficialLinkController@destroy');
+    
     // Existing API routes
     Route::get('/api/scores/stream', 'AdminController@streamScores');
 });

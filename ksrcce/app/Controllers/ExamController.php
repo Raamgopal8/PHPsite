@@ -597,6 +597,88 @@ private function parseTextToQuestions($text) {
         $this->view('student/tnpsc.php');
     }
 
+    public function showBankingPage(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/banking.php');
+    }
+
+    public function showUPSCPage(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc.php');
+    }
+
+    // Banking Sub-pages
+    public function showBankingIBPSPO(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/banking_ibps_po.php');
+    }
+
+    public function showBankingIBPSClerk(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/banking_ibps_clerk.php');
+    }
+
+    public function showBankingSBIPO(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/banking_sbi_po.php');
+    }
+
+    public function showBankingSBIClerk(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/banking_sbi_clerk.php');
+    }
+
+    public function showBankingRRB(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/banking_rrb.php');
+    }
+
+    public function showBankingRBI(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/banking_rbi.php');
+    }
+
+    // UPSC Sub-pages
+    public function showUPSCCSE(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc_cse.php');
+    }
+
+    public function showUPSCIFoS(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc_ifos.php');
+    }
+
+    public function showUPSCESE(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc_ese.php');
+    }
+
+    public function showUPSCCAPF(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc_capf.php');
+    }
+
+    public function showUPSCCDS(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc_cds.php');
+    }
+
+    public function showUPSCNDA(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc_nda.php');
+    }
+
+    public function showUPSCCMS(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc_cms.php');
+    }
+
+    public function showUPSCGeoscientist(){
+        if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
+        $this->view('student/upsc_geoscientist.php');
+    }
+
     public function showCSEPage(){
         if(!isset($_SESSION['user']) || !in_array($_SESSION['user']['role'], ['student', 'admin'])){ header('Location: /login'); exit; }
         

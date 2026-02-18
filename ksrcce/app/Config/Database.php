@@ -35,23 +35,8 @@ class Database
                     PDO::ATTR_PERSISTENT         => false,
                 ];
 
-                // Add SSL configuration if SSL_CA is set
-                $sslCa = $_ENV['DB_SSL_CA'] ?? null;
-                if ($sslCa) {
-                    $sslCaPath = realpath($sslCa);
-                    if ($sslCaPath === false) {
-                        error_log("Warning: SSL CA file not found at: {$sslCa}");
-                    } else {
-                        $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCaPath;
-                        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = true;
-                        error_log("Using SSL with CA: {$sslCaPath}");
-                    }
-                } else {
-                    error_log("No SSL CA file specified, using unencrypted connection");
-                }
-                
-                // Add error reporting for debugging
-                error_log("Attempting to connect to MySQL: {$host}:{$port}");
+                // Local MySQL connection - no SSL needed
+                error_log("Connecting to local MySQL: {$host}:{$port}");
                 self::$connection = new PDO($dsn, $username, $password, $options);
                 error_log("Successfully connected to MySQL");
                 

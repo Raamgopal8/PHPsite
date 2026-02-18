@@ -3,31 +3,31 @@
 $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
 ?>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 pt-6">
+<div class="min-h-screen bg-transparent p-4 pt-6">
     <div class="max-w-4xl mx-auto">
         <!-- Exam Header with Timer -->
-        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm mb-6">
+        <div class="bg-gray-800/60 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-sm mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="mb-4 md:mb-0">
-                    <h1 class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($exam['title'] ?? 'Exam') ?></h1>
-                    <p class="text-gray-600">Answer all questions before time runs out</p>
+                    <h1 class="text-2xl font-bold text-white"><?= htmlspecialchars($exam['title'] ?? 'Exam') ?></h1>
+                    <p class="text-gray-300">Answer all questions before time runs out</p>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="bg-red-50 text-red-700 px-4 py-2 rounded-lg border border-red-100 flex items-center">
+                    <div class="bg-red-900/20 text-red-400 px-4 py-2 rounded-lg border border-red-500/30 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span id="timer" class="font-mono text-lg font-bold"><?= sprintf('%02d:00', $examDuration) ?></span>
                     </div>
-                    <span id="question-counter" class="text-sm text-gray-600">
+                    <span id="question-counter" class="text-sm text-gray-400">
                         <?= count($questions) ?> Questions
                     </span>
                 </div>
             </div>
             
             <!-- Progress Bar -->
-            <div class="mt-4 w-full bg-gray-200 rounded-full h-2.5">
-                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out" style="width: 100%"></div>
+            <div class="mt-4 w-full bg-gray-700/50 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-out shadow-lg shadow-blue-500/50" style="width: 100%"></div>
             </div>
         </div>
 
@@ -36,18 +36,18 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
             <input type="hidden" name="exam_id" value="<?= htmlspecialchars($exam['id']) ?>">
             
             <?php foreach($questions as $i => $q): ?>
-                <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm hover:shadow-md transition-shadow duration-200">
+                <div class="bg-gray-800/60 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div class="flex items-start">
-                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-medium">
+                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-900/20 text-blue-400 flex items-center justify-center text-sm font-medium border border-blue-500/30">
                             <?= $i + 1 ?>
                         </div>
                         <div class="ml-4 flex-1">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4"><?= htmlspecialchars($q['text'] ?? $q['question_text'] ?? '') ?></h3>
+                            <h3 class="text-lg font-medium text-white mb-4"><?= htmlspecialchars($q['text'] ?? $q['question_text'] ?? '') ?></h3>
                             <div class="space-y-3">
                                 <?php foreach((is_array($q['options']) ? $q['options'] : []) as $k => $opt): ?>
-                                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors duration-200">
-                                        <input type="radio" name="answers[<?= htmlspecialchars($q['id']) ?>]" value="<?= $k ?>" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                        <span class="ml-3 text-gray-700"><?= htmlspecialchars($opt) ?></span>
+                                    <label class="flex items-center p-3 rounded-lg border border-white/10 hover:bg-gray-700/50 cursor-pointer transition-colors duration-200 group">
+                                        <input type="radio" name="answers[<?= htmlspecialchars($q['id']) ?>]" value="<?= $k ?>" class="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-600 bg-gray-700">
+                                        <span class="ml-3 text-gray-300 group-hover:text-white transition-colors"><?= htmlspecialchars($opt) ?></span>
                                     </label>
                                 <?php endforeach; ?>
                             </div>
@@ -56,16 +56,16 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
                 </div>
             <?php endforeach; ?>
             
-            <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm mt-6">
+            <div class="bg-gray-800/60 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-sm mt-6">
                 <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-                    <div class="text-sm text-gray-600">
-                        <span id="answered-count">0</span> of <?= count($questions) ?> questions answered
+                    <div class="text-sm text-gray-400">
+                        <span id="answered-count" class="text-white font-bold">0</span> of <?= count($questions) ?> questions answered
                     </div>
                     <div class="flex space-x-3">
-                        <button type="button" id="clear-all" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <button type="button" id="clear-all" class="px-4 py-2 border border-white/10 rounded-lg text-sm font-medium text-gray-300 bg-transparent hover:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             Clear All
                         </button>
-                        <button type="submit" class="px-6 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        <button type="submit" class="px-6 py-2 border border-transparent rounded-lg shadow-lg shadow-blue-500/20 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
                             Submit Exam
                         </button>
                     </div>
@@ -116,8 +116,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Change color when time is running low
         if (timeLeft <= 300) { // 5 minutes or less
-            progressBar.classList.remove('bg-blue-600');
-            progressBar.classList.add('bg-red-600');
+            progressBar.classList.remove('bg-blue-500');
+            progressBar.classList.add('bg-red-500');
+            progressBar.classList.add('shadow-red-500/50');
+            progressBar.classList.remove('shadow-blue-500/50');
             
             // Add animation when 1 minute or less
             if (timeLeft <= 60) {

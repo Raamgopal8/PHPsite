@@ -11,17 +11,51 @@ class AdminController extends Controller {
             header('Location: /login'); exit;
         }
         $exams = (new Exam($this->db))->all();
-    $achievers = (new Achiever($this->db))->all();
-    $resultModel = new \App\Models\Result($this->db);
-    $recentResults = $resultModel->getResults([], 1, 10); // Get first 10 results
+        
+        // Fetch Exam Countdowns
+        $countdownModel = new \App\Models\ExamCountdown($this->db);
+        $countdowns = $countdownModel->getAllCountdowns();
 
-    // Pass all data to the view at once
-    $this->view('admin/dashboard.php', [
-        'exams' => $exams,
-        'achievers' => $achievers,
-        'recentResults' => $recentResults['data'] ?? [],
-        'totalResults' => $recentResults['total'] ?? 0
-    ]);
+        // Fetch Achievements
+        $achievementModel = new \App\Models\Achievement($this->db);
+        $achievers = $achievementModel->getAllAchievements();
+
+        $resultModel = new \App\Models\Result($this->db);
+        $recentResults = $resultModel->getResults([], 1, 10); // Get first 10 results
+
+        // Fetch Recent Logins
+        $recentLogins = [];
+        try {
+            $stmt = $this->db->prepare("
+                SELECT l.*, u.name 
+                FROM login_logs l 
+                JOIN users u ON l.user_id = u.id 
+                ORDER BY l.login_time DESC 
+                LIMIT 5
+            ");
+            $stmt->execute();
+            $recentLogins = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {}
+
+        // Fetch Official Links
+        $officialLinks = [];
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM official_links ORDER BY created_at DESC");
+            $stmt->execute();
+            $officialLinks = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {}
+
+        // Pass all data to the view at once
+        $this->view('admin/dashboard.php', [
+            'exams' => $exams,
+            'countdowns' => $countdowns,
+            'achievers' => $achievers,
+            'achievers' => $achievers,
+            'recentResults' => $recentResults['data'] ?? [],
+            'totalResults' => $recentResults['total'] ?? 0,
+            'recentLogins' => $recentLogins,
+            'officialLinks' => $officialLinks
+        ]);
     
     }
 
@@ -46,7 +80,23 @@ class AdminController extends Controller {
             // Format date for frontend
             foreach ($logs as &$log) {
                 $log['formatted_time'] = date('M d, H:i', strtotime($log['login_time']));
-                $log['formatted_logout'] = $log['logout_time'] ? date('M d, H:i', strtotime($log['logout_time'])) : 'Active';
+                
+                if ($log['logout_time']) {
+                    $log['formatted_logout'] = date('M d, H:i', strtotime($log['logout_time']));
+                    $log['status_class'] = 'text-gray-500'; // Offline/Logged out
+                } else {
+                    // Check last_activity for timeout (e.g., 5 minutes = 300 seconds)
+                    $lastActivity = $log['last_activity'] ? strtotime($log['last_activity']) : strtotime($log['login_time']);
+                    $timeSinceActivity = time() - $lastActivity;
+                    
+                    if ($timeSinceActivity < 300) {
+                        $log['formatted_logout'] = 'Online';
+                        $log['status_class'] = 'text-green-600 font-bold';
+                    } else {
+                        $log['formatted_logout'] = 'Offline'; // Timed out
+                        $log['status_class'] = 'text-gray-400';
+                    }
+                }
             }
             
             header('Content-Type: application/json');

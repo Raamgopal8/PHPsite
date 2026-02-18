@@ -174,6 +174,23 @@ class Question extends BaseModel
     }
 
     /**
+     * Delete questions by exam ID
+     * 
+     * @param int $examId
+     * @return bool
+     */
+    public function deleteByExam($examId)
+    {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE exam_id = ?");
+            return $stmt->execute([$examId]);
+        } catch (PDOException $e) {
+            error_log("Error deleting questions: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Get a single question by ID
      * 
      * @param int $id

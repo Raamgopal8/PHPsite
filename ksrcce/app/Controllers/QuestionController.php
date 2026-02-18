@@ -4,12 +4,14 @@ namespace App\Controllers;
 use App\Models\Question;
 use App\Models\Exam;
 
-class QuestionController extends BaseController {
-    private $questionModel;
-    private $db;
+use App\Core\Controller;
 
-    public function __construct($db) {
-        $this->db = $db;
+class QuestionController extends Controller {
+    private $questionModel;
+    // private $db; // inherited from Controller
+
+    public function __construct() {
+        parent::__construct();
         $this->questionModel = new Question($this->db);
         
         // Ensure user is admin

@@ -1,11 +1,11 @@
 <?php $path = 'student/gate.php'; ?>
 
-<div class="min-h-screen bg-[#f8fafc] relative overflow-hidden pt-20">
+<div class="min-h-screen bg-transparent relative overflow-hidden pt-20">
     <!-- Decorative Background Elements -->
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-        <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-100/50 blur-3xl"></div>
-        <div class="absolute top-[20%] -right-[10%] w-[40%] h-[40%] rounded-full bg-indigo-100/50 blur-3xl"></div>
-        <div class="absolute -bottom-[10%] left-[20%] w-[30%] h-[30%] rounded-full bg-sky-100/50 blur-3xl"></div>
+        <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-3xl"></div>
+        <div class="absolute top-[20%] -right-[10%] w-[40%] h-[40%] rounded-full bg-indigo-900/20 blur-3xl"></div>
+        <div class="absolute -bottom-[10%] left-[20%] w-[30%] h-[30%] rounded-full bg-sky-900/20 blur-3xl"></div>
     </div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -17,7 +17,7 @@
                 $dashboardUrl = '/admin/dashboard';
             }
             ?>
-            <a href="<?= $dashboardUrl ?>" class="inline-flex items-center px-4 py-2 rounded-xl bg-white/80 backdrop-blur-md border border-slate-200 text-slate-600 font-medium hover:text-blue-600 hover:bg-white hover:shadow-md transition-all duration-200 group">
+            <a href="<?= $dashboardUrl ?>" class="inline-flex items-center px-4 py-2 rounded-xl bg-gray-800/60 backdrop-blur-md border border-white/10 text-gray-300 font-medium hover:text-blue-400 hover:bg-gray-800 hover:shadow-md transition-all duration-200 group">
                 <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -27,23 +27,23 @@
 
         <!-- Header Section -->
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-medium mb-4">
-                <span class="flex h-2 w-2 rounded-full bg-blue-600 mr-2"></span>
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 text-sm font-medium mb-4">
+                <span class="flex h-2 w-2 rounded-full bg-blue-500 mr-2"></span>
                 GATE Exam Preparation
             </div>
-            <h1 class="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight mb-4">
-                Master Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Engineering Journey</span>
+            <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">
+                Master Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Engineering Journey</span>
             </h1>
-            <p class="text-lg text-slate-600 mb-8">
+            <p class="text-lg text-gray-300 mb-8">
                 Access comprehensive study materials, syllabus, and resources for your GATE preparation across all major engineering disciplines.
             </p>
             
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="https://gate2026.iitg.ac.in/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-6 py-3 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
+                <a href="https://gate2026.iitg.ac.in/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-6 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
                     Official Website
                     <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </a>
-                <a href="#departments" class="inline-flex items-center px-6 py-3 rounded-xl bg-white text-slate-700 font-medium border border-slate-200 hover:bg-slate-50 transition-colors shadow-sm hover:shadow-md">
+                <a href="#departments" class="inline-flex items-center px-6 py-3 rounded-xl bg-gray-800/60 text-white font-medium border border-white/10 hover:bg-gray-700/60 transition-colors shadow-sm hover:shadow-md">
                     Browse Departments
                 </a>
             </div>
@@ -71,11 +71,11 @@
             ];
 
             foreach ($departments as $dept):
-                $bg_color = "bg-{$dept['color']}-50";
-                $text_color = "text-{$dept['color']}-600";
+                $bg_color = "bg-{$dept['color']}-900/30";
+                $text_color = "text-{$dept['color']}-400";
             ?>
-            <a href="/student/gate/<?= $dept['code'] ?>" class="group relative bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full overflow-hidden">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+            <a href="/student/gate/<?= $dept['code'] ?>" class="group relative bg-gray-800/60 rounded-2xl p-6 shadow-sm border border-white/10 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full overflow-hidden hover:bg-gray-700/60">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-gray-800 to-gray-700 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-50"></div>
                 
                 <div class="relative z-10 flex items-start justify-between mb-4">
                     <div class="w-12 h-12 rounded-xl <?= $bg_color ?> <?= $text_color ?> flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
@@ -83,60 +83,62 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<?= $dept['icon'] ?>"></path>
                         </svg>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <div class="w-8 h-8 rounded-full bg-gray-700/50 flex items-center justify-center text-gray-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
                 </div>
                 
                 <div class="relative z-10 mt-auto">
-                    <h3 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors"><?= $dept['name'] ?></h3>
-                    <p class="text-sm text-slate-500 font-medium"><?= $dept['desc'] ?></p>
+                    <h3 class="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors"><?= $dept['name'] ?></h3>
+                    <p class="text-sm text-gray-400 font-medium"><?= $dept['desc'] ?></p>
                 </div>
             </a>
             <?php endforeach; ?>
         </div>
 
+              
+
         <!-- About Section -->
-        <div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-100 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-bl-full opacity-50"></div>
+        <div class="bg-gray-800/60 backdrop-blur-md rounded-3xl p-8 md:p-12 shadow-sm border border-white/10 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-900/20 to-indigo-900/20 rounded-bl-full opacity-50"></div>
             
             <div class="relative z-10 grid md:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900 mb-4">About GATE Exam</h2>
-                    <p class="text-slate-600 mb-6 leading-relaxed">
+                    <h2 class="text-2xl font-bold text-white mb-4">About GATE Exam</h2>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
                         The Graduate Aptitude Test in Engineering (GATE) is a prestigious all-India examination that tests the comprehensive understanding of various undergraduate subjects in engineering and science.
                     </p>
                     <ul class="space-y-3">
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="text-slate-700">Gateway to PSUs and Higher Education</span>
+                            <svg class="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-gray-300">Gateway to PSUs and Higher Education</span>
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="text-slate-700">Valid for 3 years from results</span>
+                            <svg class="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-gray-300">Valid for 3 years from results</span>
                         </li>
                         <li class="flex items-start">
-                            <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="text-slate-700">Conducted by IISc and 7 IITs</span>
+                            <svg class="w-5 h-5 text-green-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-gray-300">Conducted by IISc and 7 IITs</span>
                         </li>
                     </ul>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-blue-50 p-6 rounded-2xl text-center">
-                        <div class="text-3xl font-bold text-blue-600 mb-1">29+</div>
-                        <div class="text-sm text-blue-800 font-medium">Subjects</div>
+                    <div class="bg-blue-900/30 p-6 rounded-2xl text-center border border-blue-500/20">
+                        <div class="text-3xl font-bold text-blue-400 mb-1">29+</div>
+                        <div class="text-sm text-blue-300 font-medium">Subjects</div>
                     </div>
-                    <div class="bg-indigo-50 p-6 rounded-2xl text-center">
-                        <div class="text-3xl font-bold text-indigo-600 mb-1">3 Yr</div>
-                        <div class="text-sm text-indigo-800 font-medium">Score Validity</div>
+                    <div class="bg-indigo-900/30 p-6 rounded-2xl text-center border border-indigo-500/20">
+                        <div class="text-3xl font-bold text-indigo-400 mb-1">3 Yr</div>
+                        <div class="text-sm text-indigo-300 font-medium">Score Validity</div>
                     </div>
-                    <div class="bg-sky-50 p-6 rounded-2xl text-center">
-                        <div class="text-3xl font-bold text-sky-600 mb-1">100</div>
-                        <div class="text-sm text-sky-800 font-medium">Total Marks</div>
+                    <div class="bg-sky-900/30 p-6 rounded-2xl text-center border border-sky-500/20">
+                        <div class="text-3xl font-bold text-sky-400 mb-1">100</div>
+                        <div class="text-sm text-sky-300 font-medium">Total Marks</div>
                     </div>
-                    <div class="bg-violet-50 p-6 rounded-2xl text-center">
-                        <div class="text-3xl font-bold text-violet-600 mb-1">Feb</div>
-                        <div class="text-sm text-violet-800 font-medium">Exam Month</div>
+                    <div class="bg-violet-900/30 p-6 rounded-2xl text-center border border-violet-500/20">
+                        <div class="text-3xl font-bold text-violet-400 mb-1">Feb</div>
+                        <div class="text-sm text-violet-300 font-medium">Exam Month</div>
                     </div>
                 </div>
             </div>

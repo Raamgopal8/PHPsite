@@ -1,7 +1,7 @@
 <?php
 namespace App\Core;
 
-use App\Config\database;
+use App\Config\Database;
 
 class App
 {
@@ -9,7 +9,7 @@ class App
 
     public function __construct()
     {
-        $this->db = database::getConnection();
+        $this->db = Database::getConnection();
 
         // Ensure session directory exists (but don't modify ini here)
         $sessPath = $_ENV['SESSION_PATH'] ?? __DIR__ . '/../../storage/sessions';
