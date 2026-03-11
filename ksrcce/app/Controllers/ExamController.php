@@ -107,15 +107,40 @@ class ExamController extends Controller {
 
     // Save questions for an exam
     private function saveQuestions($examId, $questions) {
-        foreach ($questions as $questionData) {
+        foreach ($questions as $index => $questionData) {
             if (empty($questionData['text']) || empty($questionData['options'])) continue;
+            
+            $imagePath = $questionData['image'] ?? null;
+            
+            // Handle new image upload if present
+            if (isset($_FILES['questions']['name'][$index]['new_image']) && 
+                $_FILES['questions']['error'][$index]['new_image'] === UPLOAD_ERR_OK) {
+                
+                $file = [
+                    'name' => $_FILES['questions']['name'][$index]['new_image'],
+                    'type' => $_FILES['questions']['type'][$index]['new_image'],
+                    'tmp_name' => $_FILES['questions']['tmp_name'][$index]['new_image'],
+                    'error' => $_FILES['questions']['error'][$index]['new_image'],
+                    'size' => $_FILES['questions']['size'][$index]['new_image']
+                ];
+                
+                try {
+                    $uploadedPath = $this->questionModel->uploadQuestionImage($file);
+                    if ($uploadedPath) {
+                        $imagePath = $uploadedPath;
+                    }
+                } catch (\Exception $e) {
+                    // Continue without image or handle error
+                }
+            }
             
             $question = [
                 'exam_id' => $examId,
-                'text' => $questionData['text'],
+                'question_text' => $questionData['text'],
                 'options' => $questionData['options'],
-                'answer' => (int)$questionData['answer'],
+                'correct_answer' => (int)$questionData['answer'],
                 'explanation' => $questionData['explanation'] ?? '',
+                'question_image' => $imagePath,
                 'created_at' => date('c')
             ];
             

@@ -136,6 +136,7 @@ $routes = [
         '/materials' => 'MaterialController@list',
         '/admin/exam-countdowns' => 'ExamCountdownController@index',
         '/admin/achievements' => 'AchievementController@index',
+        '/admin/add-question' => 'QuestionController@showAddQuestionForm',
         // API endpoints
         '/api/exam-countdowns' => 'ExamCountdownController@getCountdowns',
         '/api/achievements' => 'AchievementController@getAchievements',
@@ -178,6 +179,8 @@ $routes = [
         '/api/achievements/delete' => 'AchievementController@delete',
         '/api/achievements/toggle' => 'AchievementController@toggleStatus',
         '/api/achievements/featured' => 'AchievementController@toggleFeatured',
+        // Question API
+        '/api/questions/create' => 'QuestionController@createQuestion',
         '/admin/official-links/store' => 'OfficialLinkController@store'
     ]
 ];

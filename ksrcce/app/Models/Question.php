@@ -10,9 +10,6 @@ class Question extends BaseModel
 
     /**
      * Parse text content and extract questions
-     * 
-     * @param string $content Text content to parse
-     * @return array Array of parsed questions
      */
     public function parseQuestionsFromText($content) 
     {
@@ -24,7 +21,6 @@ class Question extends BaseModel
             $line = trim($line);
             if (empty($line)) continue;
 
-            // Check for question line (starts with number and dot or Q:)
             if (preg_match('/^(\d+\.|Q[:.]?\s*)(.+)/i', $line, $matches)) {
                 if ($currentQuestion) {
                     $questions[] = $currentQuestion;
@@ -33,39 +29,27 @@ class Question extends BaseModel
                     'text' => trim($matches[2]),
                     'options' => [],
                     'answer' => -1,
-                    'explanation' => ''
+                    'explanation' => '',
+                    'image' => null
                 ];
             }
-            // Check for option (starts with a letter and parenthesis)
             elseif (preg_match('/^([A-D])\)\s*\*?(.+?)\*?\s*$/i', $line, $matches)) {
                 if ($currentQuestion) {
                     $optionText = trim($matches[2]);
                     $currentQuestion['options'][] = $optionText;
-                    
-                    // If line has an asterisk, it's the correct answer
                     if (strpos($line, '*') !== false) {
                         $currentQuestion['answer'] = count($currentQuestion['options']) - 1;
                     }
                 }
             }
-            // Check for explanation
-            elseif (preg_match('/^Explanation[:\s]+(.+)/i', $line, $matches) && $currentQuestion) {
-                $currentQuestion['explanation'] = trim($matches[1]);
+            elseif (preg_match('/\[(image|figure):\s*([^\]]+)\]/i', $line, $matches) && $currentQuestion) {
+                $currentQuestion['image'] = trim($matches[2]);
             }
-            // If it's a continuation of the question or option
-            elseif ($currentQuestion) {
-                if (empty($currentQuestion['options'])) {
-                    $currentQuestion['text'] .= ' ' . $line;
-                } else {
-                    $lastOption = count($currentQuestion['options']) - 1;
-                    if ($lastOption >= 0) {
-                        $currentQuestion['options'][$lastOption] .= ' ' . $line;
-                    }
-                }
+            elseif (preg_match('/^(Explanation|Exp|Answer):\s*(.+)/i', $line, $matches) && $currentQuestion) {
+                $currentQuestion['explanation'] = trim($matches[2]);
             }
         }
 
-        // Add the last question
         if ($currentQuestion) {
             $questions[] = $currentQuestion;
         }
@@ -74,137 +58,138 @@ class Question extends BaseModel
     }
 
     /**
-     * Save multiple questions for an exam
-     * 
-     * @param string $examId
-     * @param array $questions
-     * @return array Array of inserted question IDs
-     */
-    public function saveQuestions($examId, $questions) 
-    {
-        $insertedIds = [];
-        
-        foreach ($questions as $question) {
-            if (empty($question['text']) || count($question['options']) < 2 || $question['answer'] === -1) {
-                continue; // Skip invalid questions
-            }
-            
-            $result = $this->createQuestion(
-                $examId,
-                $question['text'],
-                $question['options'],
-                $question['answer'],
-                $question['explanation'] ?? ''
-            );
-            
-            if ($result) {
-                $insertedIds[] = $result;
-            }
-        }
-        
-        return $insertedIds;
-    }
-
-    /**
      * Create a new question
-     * 
-     * @param int $examId
-     * @param string $text
-     * @param array $options
-     * @param int $answer
-     * @param string $explanation
-     * @return int|bool Inserted question ID or false on failure
      */
-    public function createQuestion($examId, $text, $options, $answer, $explanation = '')
-    {
-        try {
-            $optionsJson = json_encode($options);
-            
-            $stmt = $this->db->prepare("
-                INSERT INTO {$this->table} 
-                (exam_id, question_text, options, correct_answer, explanation, created_at) 
-                VALUES (?, ?, ?, ?, ?, NOW())
-            ");
-            
-            $stmt->execute([
-                $examId,
-                $text,
-                $optionsJson,
-                $answer,
-                $explanation
-            ]);
-            
-            return $this->db->lastInsertId();
-        } catch (PDOException $e) {
-            error_log("Error creating question: " . $e->getMessage());
-            return false;
-        }
+    public function create($data) {
+        $stmt = $this->db->prepare("
+            INSERT INTO questions (exam_id, question_text, options, correct_answer, explanation, question_image) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        return $stmt->execute([
+            $data['exam_id'],
+            $data['question_text'] ?? $data['text'] ?? '',
+            json_encode($data['options']),
+            $data['correct_answer'] ?? $data['answer'] ?? 0,
+            $data['explanation'] ?? null,
+            $data['question_image'] ?? $data['image'] ?? null
+        ]);
     }
 
     /**
-     * Find questions by exam ID
-     * 
-     * @param int $examId
-     * @return array
+     * Legacy wrapper for create
      */
+    public function createQuestion($examId, $text, $options, $answer, $explanation = '') {
+        return $this->create([
+            'exam_id' => $examId,
+            'question_text' => $text,
+            'options' => $options,
+            'correct_answer' => $answer,
+            'explanation' => $explanation
+        ]);
+    }
+
+    /**
+     * Update a question
+     */
+    public function update($conditions, $data) {
+        // If $conditions is not an array, assume it's the ID
+        if (!is_array($conditions)) {
+            $conditions = ['id' => $conditions];
+        }
+
+        $stmt = $this->db->prepare("
+            UPDATE questions 
+            SET question_text = ?, options = ?, correct_answer = ?, explanation = ?, question_image = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        ");
+        return $stmt->execute([
+            $data['question_text'] ?? $data['text'] ?? '',
+            json_encode($data['options']),
+            $data['correct_answer'] ?? $data['answer'] ?? 0,
+            $data['explanation'] ?? null,
+            $data['question_image'] ?? $data['image'] ?? null,
+            $conditions['id']
+        ]);
+    }
+
+    /**
+     * Upload question image
+     */
+    public function uploadQuestionImage($file) {
+        if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
+            return null;
+        }
+        
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        $maxFileSize = 5 * 1024 * 1024; // 5MB
+        
+        if (!in_array($file['type'], $allowedTypes)) {
+            throw new \Exception('Invalid file type.');
+        }
+        
+        if ($file['size'] > $maxFileSize) {
+            throw new \Exception('File size too large.');
+        }
+        
+        $uploadDir = __DIR__ . '/../../public/assets/questions/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'question_' . time() . '_' . uniqid() . '.' . $extension;
+        $filepath = $uploadDir . $filename;
+        
+        if (move_uploaded_file($file['tmp_name'], $filepath)) {
+            return '/assets/questions/' . $filename;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Delete question image
+     */
+    public function deleteQuestionImage($imageUrl) {
+        if (empty($imageUrl)) return true;
+        $filepath = __DIR__ . '/../../public' . $imageUrl;
+        if (file_exists($filepath)) {
+            return unlink($filepath);
+        }
+        return true;
+    }
+
     public function findByExam($examId)
     {
         try {
-            $stmt = $this->db->prepare("
-                SELECT * FROM {$this->table} 
-                WHERE exam_id = ? 
-                ORDER BY id ASC
-            ");
-            
+            $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE exam_id = ? ORDER BY id ASC");
             $stmt->execute([$examId]);
             $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Decode JSON options field for each question
             foreach ($questions as &$question) {
                 if (isset($question['options']) && is_string($question['options'])) {
                     $question['options'] = json_decode($question['options'], true) ?? [];
                 }
             }
-            
             return $questions;
         } catch (PDOException $e) {
-            error_log("Error finding questions: " . $e->getMessage());
             return [];
         }
     }
 
-    /**
-     * Delete questions by exam ID
-     * 
-     * @param int $examId
-     * @return bool
-     */
     public function deleteByExam($examId)
     {
-        try {
-            $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE exam_id = ?");
-            return $stmt->execute([$examId]);
-        } catch (PDOException $e) {
-            error_log("Error deleting questions: " . $e->getMessage());
-            return false;
-        }
+        $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE exam_id = ?");
+        return $stmt->execute([$examId]);
     }
 
-    /**
-     * Get a single question by ID
-     * 
-     * @param int $id
-     * @return array|bool Question data or false if not found
-     */
     public function findById($id)
     {
-        try {
-            $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = ?");
-            $stmt->execute([$id]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error finding question: " . $e->getMessage());
-            return false;
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = ?");
+        $stmt->execute([$id]);
+        $question = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($question && isset($question['options']) && is_string($question['options'])) {
+            $question['options'] = json_decode($question['options'], true) ?? [];
         }
+        return $question;
     }
 }

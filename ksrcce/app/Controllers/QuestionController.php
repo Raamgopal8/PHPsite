@@ -22,6 +22,15 @@ class QuestionController extends Controller {
     }
 
     /**
+     * Show the add question form
+     */
+    public function showAddQuestionForm() {
+        // This method just displays the form
+        // The actual form handling is done by JavaScript
+        $this->view('admin/add_question.php');
+    }
+
+    /**
      * Handle text file upload and parse questions
      */
     public function handleTextFileUpload() {
@@ -120,13 +129,14 @@ class QuestionController extends Controller {
                 }
 
                 // Create question
-                $result = $this->questionModel->createQuestion(
-                    $examId,
-                    $questionData['text'],
-                    $questionData['options'],
-                    $questionData['answer'],
-                    $questionData['explanation'] ?? ''
-                );
+                $result = $this->questionModel->create([
+                    'exam_id' => $examId,
+                    'question_text' => $questionData['text'],
+                    'options' => $questionData['options'],
+                    'correct_answer' => $questionData['answer'],
+                    'explanation' => $questionData['explanation'] ?? '',
+                    'question_image' => $questionData['image'] ?? null
+                ]);
 
                 if ($result) {
                     $savedIds[] = (string)$result;
@@ -144,6 +154,68 @@ class QuestionController extends Controller {
             echo json_encode([
                 'success' => false,
                 'message' => 'Error saving questions: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Handle individual question creation with image upload
+     * Endpoint: POST /api/questions/create
+     */
+    public function createQuestion() {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            return;
+        }
+
+        $examId = $_POST['exam_id'] ?? null;
+        $questionText = $_POST['question_text'] ?? '';
+        $options = json_decode($_POST['options'] ?? '[]', true);
+        $correctAnswer = $_POST['correct_answer'] ?? 0;
+        $explanation = $_POST['explanation'] ?? '';
+
+        // Validate required fields
+        if (!$examId || !$questionText || empty($options)) {
+            echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+            return;
+        }
+
+        try {
+            $questionImage = null;
+            
+            // Handle image upload
+            if (isset($_FILES['question_image']) && $_FILES['question_image']['error'] === UPLOAD_ERR_OK) {
+                $questionImage = $this->questionModel->uploadQuestionImage($_FILES['question_image']);
+            }
+
+            // Create question
+            $result = $this->questionModel->create([
+                'exam_id' => $examId,
+                'question_text' => $questionText,
+                'options' => $options,
+                'correct_answer' => $correctAnswer,
+                'explanation' => $explanation,
+                'question_image' => $questionImage
+            ]);
+
+            if ($result) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Question created successfully',
+                    'question_id' => $result,
+                    'image_url' => $questionImage
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to create question']);
+            }
+        } catch (\Exception $e) {
+            error_log('Error creating question: ' . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error creating question: ' . $e->getMessage()
             ]);
         }
     }

@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS questions (
     options JSON NOT NULL,
     correct_answer INT NOT NULL COMMENT 'Index of the correct option',
     explanation TEXT,
+    question_image VARCHAR(500) NULL COMMENT 'Path to question figure/image',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE

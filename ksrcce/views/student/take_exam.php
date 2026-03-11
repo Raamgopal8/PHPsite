@@ -43,6 +43,13 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
                         </div>
                         <div class="ml-4 flex-1">
                             <h3 class="text-lg font-medium text-white mb-4"><?= htmlspecialchars($q['text'] ?? $q['question_text'] ?? '') ?></h3>
+                            
+                            <?php if (!empty($q['question_image'])): ?>
+                                <div class="mb-4">
+                                    <img src="<?= htmlspecialchars($q['question_image']) ?>" alt="Question Image" class="max-w-full h-auto rounded-lg border border-white/10">
+                                </div>
+                            <?php endif; ?>
+
                             <div class="space-y-3">
                                 <?php foreach((is_array($q['options']) ? $q['options'] : []) as $k => $opt): ?>
                                     <label class="flex items-center p-3 rounded-lg border border-white/10 hover:bg-gray-700/50 cursor-pointer transition-colors duration-200 group">

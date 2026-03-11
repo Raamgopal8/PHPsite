@@ -214,7 +214,28 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Question Text</label>
                                         <input type="text" name="questions[<?= $index ?>][text]" required
                                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                            value="<?= htmlspecialchars($question['text'] ?? '') ?>">
+                                            value="<?= htmlspecialchars($question['question_text'] ?? $question['text'] ?? '') ?>">
+                                    </div>
+                                    
+                                    <?php if (!empty($question['question_image'])): ?>
+                                        <div class="mb-3">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Current Image</label>
+                                            <div class="relative inline-block">
+                                                <img src="<?= htmlspecialchars($question['question_image']) ?>" alt="Question Image" class="h-24 w-auto rounded border">
+                                                <input type="hidden" name="questions[<?= $index ?>][image]" value="<?= htmlspecialchars($question['question_image']) ?>">
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="mb-3">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Upload New Image (Optional)</label>
+                                        <input type="file" name="questions[<?= $index ?>][new_image]" accept="image/*"
+                                               onchange="previewImage(this)"
+                                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                        <div class="mt-2 preview-container hidden">
+                                            <img src="" alt="Preview" class="h-24 w-auto rounded border shadow-sm">
+                                            <button type="button" onclick="clearPreview(this)" class="text-xs text-red-500 mt-1 hover:underline">Remove Preview</button>
+                                        </div>
                                     </div>
                                     <div class="space-y-2">
                                         <?php for ($i = 0; $i < 4; $i++): ?>
@@ -440,6 +461,16 @@ window.addQuestionFromText = function(text = '', options = [], correctAnswer = 0
                     </div>
                 `).join('')}
             </div>
+            <div class="mb-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Question Image (Optional)</label>
+                <input type="file" name="questions[${questionIndex}][new_image]" accept="image/*"
+                       onchange="previewImage(this)"
+                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                <div class="mt-2 preview-container hidden">
+                    <img src="" alt="Preview" class="h-24 w-auto rounded border shadow-sm">
+                    <button type="button" onclick="clearPreview(this)" class="text-xs text-red-500 mt-1 hover:underline">Remove Preview</button>
+                </div>
+            </div>
             <div class="mt-3">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Explanation (Optional)</label>
                 <textarea name="questions[${questionIndex}][explanation]"
@@ -558,4 +589,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Preview image when selected
+window.previewImage = function(input) {
+    const file = input.files[0];
+    const container = input.nextElementSibling;
+    const img = container.querySelector('img');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            container.classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
+// Clear image preview
+window.clearPreview = function(button) {
+    const container = button.parentNode;
+    const input = container.previousElementSibling;
+    input.value = '';
+    container.classList.add('hidden');
+}
 </script>
