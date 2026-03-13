@@ -38,7 +38,9 @@ class Database
                 // Local MySQL connection - no SSL needed
                 error_log("Connecting to local MySQL: {$host}:{$port}");
                 self::$connection = new PDO($dsn, $username, $password, $options);
-                error_log("Successfully connected to MySQL");
+                // Set timezone to IST
+                self::$connection->exec("SET time_zone = '+05:30'");
+                error_log("Successfully connected to MySQL and set timezone to IST");
                 
             } catch (PDOException $e) {
                 die("MySQL Connection Error: " . $e->getMessage() . "\n");

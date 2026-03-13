@@ -123,7 +123,11 @@ class AdminController extends Controller {
         $questions = $_POST['questions'] ?? [];
         
         $examModel = new Exam($this->db);
-        $examId = $examModel->createExam($title, $category, $duration, []);
+        $examId = $examModel->createExam($title, $category, $duration, [
+            'passing_score' => $_POST['passing_score'] ?? 70,
+            'description' => $_POST['description'] ?? null,
+            'instructions' => $_POST['instructions'] ?? null
+        ]);
         
         if ($examId && !empty($questions)) {
             $questionModel = new Question($this->db);

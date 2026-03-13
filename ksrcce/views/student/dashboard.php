@@ -39,7 +39,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-400">Completed</p>
-                        <p class="text-3xl font-bold text-white mt-2">0</p>
+                        <p class="text-3xl font-bold text-white mt-2"><?= $stats['completed'] ?? 0 ?></p>
                     </div>
                     <div class="p-4 rounded-xl bg-green-900/30 text-green-400 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,7 +54,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-400">Avg. Score</p>
-                        <p class="text-3xl font-bold text-white mt-2">-</p>
+                        <p class="text-3xl font-bold text-white mt-2"><?= isset($stats['avg_score']) ? round($stats['avg_score'], 1) . '%' : '-' ?></p>
                     </div>
                     <div class="p-4 rounded-xl bg-yellow-900/30 text-yellow-400 group-hover:bg-yellow-600 group-hover:text-white transition-colors duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

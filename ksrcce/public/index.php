@@ -3,6 +3,9 @@
 // ✅ absolutely NO whitespace before this line
 ob_start();  // Start buffering before ANY output
 
+// Set timezone to IST
+date_default_timezone_set('Asia/Kolkata');
+
 // Load environment variables first
 require __DIR__ . '/../vendor/autoload.php';
 

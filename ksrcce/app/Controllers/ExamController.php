@@ -191,6 +191,8 @@ class ExamController extends Controller {
                     'category' => $_POST['category'],
                     'duration' => (int)$_POST['duration'],
                     'passing_score' => isset($_POST['passing_score']) ? (int)$_POST['passing_score'] : 60,
+                    'description' => $_POST['description'] ?? null,
+                    'instructions' => $_POST['instructions'] ?? null,
                     'updated_at' => date('c')
                 ];
 
@@ -251,7 +253,12 @@ class ExamController extends Controller {
         if (!isset($_SESSION['user'])) header('Location: /login');
         $userId = $_SESSION['user']['id'] ?? $_SESSION['user']['_id'] ?? null;
         $exams = $this->examModel->getAvailableExams($userId);
-        $this->view('student/dashboard.php', ['exams' => $exams, 'user' => $_SESSION['user']]);
+        $stats = $this->resultModel->getStudentStats($userId);
+        $this->view('student/dashboard.php', [
+            'exams' => $exams, 
+            'user' => $_SESSION['user'],
+            'stats' => $stats
+        ]);
     }
 
     public function listExams() {

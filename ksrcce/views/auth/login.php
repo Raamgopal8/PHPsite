@@ -1,16 +1,11 @@
 <?php $path = 'auth/login.php'; ?>
 
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-    <div class="w-full max-w-md">
-        <!-- Logo -->
+    <div class="w-full max-w-md mt-12">
+        <!-- Main Heading -->
         <div class="text-center mb-8">
-            <a href="/" class="inline-flex items-center space-x-3">
-                <img src="/assets/KSR College of Engineering.jpg" alt="KSR College of Engineering" class="h-24 w-auto object-contain">
-                <div class="h-16 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
-                <img src="/assets/ccelogo.jpg" alt="CCE Department" class="h-16 w-auto object-contain">
-            </a>
-            <h1 class="mt-4 text-2xl font-bold text-gray-800">Welcome back</h1>
-            <p class="mt-1 text-sm text-gray-600">Sign in to your account to continue</p>
+            <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Welcome back</h1>
+            <p class="mt-2 text-sm text-gray-600">Sign in to your account to continue</p>
         </div>
 
         <!-- Flash Messages -->

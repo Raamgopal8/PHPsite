@@ -38,6 +38,9 @@ class BaseModel {
     }
 
     public function update($conditions, $data) {
+        if (!is_array($conditions)) {
+            $conditions = ['id' => $conditions];
+        }
         $set = [];
         $params = [];
         

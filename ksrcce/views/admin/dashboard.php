@@ -477,11 +477,11 @@
                                                     </span>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                                                    <?= ucfirst(str_replace('_', ' ', $result['status'])) ?>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <?= date('M d, H:i', $result['created_at']->toDateTime()->getTimestamp()) ?>
-                                                </td>
+                                                     <?= ($result['percentage'] ?? 0) >= 70 ? 'Passed' : 'Failed' ?>
+                                                 </td>
+                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                     <?= date('M d, H:i', strtotime($result['created_at'] ?? 'now')) ?>
+                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>

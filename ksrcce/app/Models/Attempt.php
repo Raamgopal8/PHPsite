@@ -11,7 +11,7 @@ class Attempt extends BaseModel {
             'exam_id' => $examId,
             'answers' => json_encode($answers),
             'score' => $score,
-            'submitted_at' => date('c')
+            'submitted_at' => date('Y-m-d H:i:s')
         ];
         return $this->insert($doc);
     }

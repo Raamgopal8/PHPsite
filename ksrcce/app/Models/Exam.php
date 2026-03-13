@@ -8,13 +8,16 @@ class Exam extends BaseModel {
         parent::__construct($db); 
     }
 
-    public function createExam($title, $category, $duration, $questions = []) {
+    public function createExam($title, $category, $duration, $data = []) {
         $doc = [
             'title' => $title,
             'category' => $category,
             'duration' => (int)$duration,
+            'passing_score' => $data['passing_score'] ?? 70,
+            'description' => $data['description'] ?? null,
+            'instructions' => $data['instructions'] ?? null,
             'status' => 'active',
-            'created_at' => date('c')
+            'created_at' => date('Y-m-d H:i:s')
         ];
         return $this->insert($doc);
     }

@@ -71,81 +71,79 @@
 <body class="min-h-screen flex flex-col">
 
 
-<header class="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-50 rounded-2xl">
-    <nav class="glass-nav rounded-2xl p-2.5 mx-4">
-        <div class="flex items-center justify-between h-24 px-4">
+<header class="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-7xl z-50">
+    <nav class="glass-nav rounded-2xl p-2.5 mx-4 md:mx-6 flex items-center justify-between">
+        <div class="flex items-center justify-between w-full h-20 px-4">
             <!-- Logo -->
             <a href="https://www.ksrce.ac.in/" class="flex items-center space-x-3 flex-shrink-0">
                 <img src="/assets/KSR College of Engineering.jpg" alt="KSR College of Engineering" class="h-20 w-auto object-contain rounded-lg">
                 <div class="h-16 w-px bg-gradient-to-b from-transparent via-gray-600 to-transparent hidden sm:block"></div>
-                <img src="/assets/ccelogo.jpg" alt="CCE Department" class="h-20 w-auto object-contain rounded-lg hidden sm:block">
+                <img src="/assets/ccelogo.jpg" alt="CCE Department" class="h-16 w-auto object-contain rounded-lg hidden sm:block">
             </a>
 
             <!-- Centered College Name -->
-            <div class="hidden md:flex flex-col items-center justify-center text-center px-4 flex-grow">
-                <h1 class="text-xl lg:text-3xl font-black text-white tracking-widest uppercase truncate leading-tight">
+            <div class="hidden lg:flex flex-col items-center justify-center text-center px-4 flex-1 min-w-0">
+                <h1 class="text-xl lg:text-3xl font-black text-white tracking-widest uppercase truncate leading-tight w-full">
                     KSR COLLEGE OF ENGINEERING
                 </h1>
-                <p class="text-sm lg:text-lg font-bold text-gray-300 tracking-[0.2em] uppercase opacity-90">
+                <p class="text-xs lg:text-base font-bold text-gray-300 tracking-[0.2em] uppercase opacity-90 truncate w-full">
                     Tiruchengode
                 </p>
             </div>
 
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex items-center space-x-1 flex-shrink-0">
-                <?php
-                $dashboard_link = '/';
-                $is_dashboard_active = basename($_SERVER['REQUEST_URI']) === '';
+            <div class="flex items-center space-x-2 flex-shrink-0 ml-auto md:ml-0">
+                <div class="hidden md:flex items-center space-x-1">
+                    <?php
+                    $dashboard_link = '/';
+                    $is_dashboard_active = basename($_SERVER['REQUEST_URI']) === '';
 
-                if (isset($_SESSION['user'])) {
-                    if ($_SESSION['user']['role'] === 'admin') {
-                        $dashboard_link = '/admin/dashboard';
-                        $is_dashboard_active = str_contains($_SERVER['REQUEST_URI'], '/admin/dashboard');
-                    } else {
-                        // Assuming non-admin users are students
-                        $dashboard_link = '/student/dashboard';
-                        $is_dashboard_active = str_contains($_SERVER['REQUEST_URI'], '/student/dashboard');
+                    if (isset($_SESSION['user'])) {
+                        if ($_SESSION['user']['role'] === 'admin') {
+                            $dashboard_link = '/admin/dashboard';
+                            $is_dashboard_active = str_contains($_SERVER['REQUEST_URI'], '/admin/dashboard');
+                        } else {
+                            $dashboard_link = '/student/dashboard';
+                            $is_dashboard_active = str_contains($_SERVER['REQUEST_URI'], '/student/dashboard');
+                        }
                     }
-                }
-                ?>
-                <a href="<?= $dashboard_link ?>" class="nav-link <?= $is_dashboard_active ? 'active' : '' ?>">
-                    <span class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        Home
-                    </span>
-                </a>
-                <?php if(isset($_SESSION['user'])): ?>
-                    <a href="/logout" class="nav-link text-red-400 hover:text-red-300">
+                    ?>
+                    <a href="<?= $dashboard_link ?>" class="nav-link <?= $is_dashboard_active ? 'active' : '' ?>">
                         <span class="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                             </svg>
-                            Sign out
+                            Home
                         </span>
                     </a>
-                <?php else: ?>
-                    <a href="/login" class="nav-link <?= $_SERVER['REQUEST_URI'] === '/login' ? 'active' : 'text-gray-300' ?>">
-                        <span class="flex items-center">
+                    <?php if(isset($_SESSION['user'])): ?>
+                        <a href="/logout" class="nav-link text-red-400 hover:text-red-300">
+                            <span class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Sign out
+                            </span>
+                        </a>
+                    <?php else: ?>
+                        <a href="/login" class="nav-link <?= $_SERVER['REQUEST_URI'] === '/login' ? 'active' : 'text-gray-300' ?>">
+                            <span class="flex items-center whitespace-nowrap">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                </svg>
+                                Login
+                            </span>
+                        </a>
+                        <a href="/register" class="register-btn flex items-center whitespace-nowrap">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                             </svg>
-                            Login
-                        </span>
-                    </a>
-                    <a href="/register" class="register-btn flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                        </svg>
-                        Get Started
-                    </a>
-                <?php endif; ?>
-            </div>
+                            Get Started
+                        </a>
+                    <?php endif; ?>
+                </div>
 
-            <!-- Mobile menu button -->
-            <div class="md:hidden flex items-center">
-                <button type="button" class="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-menu">
+                <!-- Mobile menu button -->
+                <button type="button" class="mobile-menu-btn md:hidden" aria-expanded="false" aria-controls="mobile-menu">
                     <span class="sr-only">Open main menu</span>
                     <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -174,7 +172,7 @@
                     <a href="/logout" class="block px-3 py-2 rounded-md text-base font-medium text-red-500 hover:bg-gray-800">Sign out</a>
                 <?php else: ?>
                     <a href="/login" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-800 hover:text-blue-400">Login</a>
-                    <a href="/register" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700">Register</a>
+                    <a href="/register" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700">Get Started</a>
                 <?php endif; ?>
             </div>
         </div>

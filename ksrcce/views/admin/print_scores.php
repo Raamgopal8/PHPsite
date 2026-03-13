@@ -72,7 +72,7 @@
                         <td><?= htmlspecialchars($result['exam_title']) ?></td>
                         <td><?= htmlspecialchars($result['score']) ?> / <?= htmlspecialchars($result['total_questions']) ?></td>
                         <td><?= number_format($result['percentage'] ?? 0, 1) ?>%</td>
-                        <td class="<?= $statusClass ?>"><?= ucfirst(str_replace('_', ' ', $result['status'])) ?></td>
+                        <td class="<?= $statusClass ?>"><?= $isPass ? 'Passed' : 'Failed' ?></td>
                         <td><?= date('M d, Y H:i:s', is_numeric($result['created_at']) ? $result['created_at'] : strtotime($result['created_at'] ?? 'now')) ?></td>
                     </tr>
                 <?php endforeach; ?>

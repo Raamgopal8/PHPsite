@@ -87,4 +87,14 @@ class Result extends BaseModel
             'total_pages' => $limit > 0 ? ceil($total / $limit) : 1
         ];
     }
+
+    public function getStudentStats($studentId)
+    {
+        $sql = "SELECT COUNT(*) as completed, AVG(percentage) as avg_score 
+                FROM {$this->table} 
+                WHERE student_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$studentId]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
 }
