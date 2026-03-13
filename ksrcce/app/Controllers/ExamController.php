@@ -144,7 +144,7 @@ class ExamController extends Controller {
                 'correct_answer' => (int)$questionData['answer'],
                 'explanation' => $questionData['explanation'] ?? '',
                 'question_image' => $imagePath,
-                'created_at' => date('c')
+                'created_at' => date('Y-m-d H:i:s')
             ];
             
             $this->questionModel->create($question);

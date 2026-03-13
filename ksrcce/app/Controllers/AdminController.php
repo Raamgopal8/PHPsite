@@ -131,16 +131,41 @@ class AdminController extends Controller {
         
         if ($examId && !empty($questions)) {
             $questionModel = new Question($this->db);
-            foreach ($questions as $q) {
+            foreach ($questions as $index => $q) {
                 if (empty($q['text']) || empty($q['options'])) continue;
                 
-                $questionModel->createQuestion(
-                    $examId,
-                    $q['text'],
-                    $q['options'],
-                    (int)($q['correct_answer'] ?? 0),
-                    $q['explanation'] ?? ''
-                );
+                $imagePath = null;
+                // Handle image upload if present
+                if (isset($_FILES['questions']['name'][$index]['new_image']) && 
+                    $_FILES['questions']['error'][$index]['new_image'] === UPLOAD_ERR_OK) {
+                    
+                    $file = [
+                        'name' => $_FILES['questions']['name'][$index]['new_image'],
+                        'type' => $_FILES['questions']['type'][$index]['new_image'],
+                        'tmp_name' => $_FILES['questions']['tmp_name'][$index]['new_image'],
+                        'error' => $_FILES['questions']['error'][$index]['new_image'],
+                        'size' => $_FILES['questions']['size'][$index]['new_image']
+                    ];
+                    
+                    try {
+                        $uploadedPath = $questionModel->uploadQuestionImage($file);
+                        if ($uploadedPath) {
+                            $imagePath = $uploadedPath;
+                        }
+                    } catch (\Exception $e) {
+                        error_log("Question image upload failed: " . $e->getMessage());
+                    }
+                }
+
+                $questionModel->create([
+                    'exam_id' => $examId,
+                    'question_text' => $q['text'],
+                    'options' => $q['options'],
+                    'correct_answer' => (int)($q['correct_answer'] ?? 0),
+                    'explanation' => $q['explanation'] ?? '',
+                    'question_image' => $imagePath,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
             }
         }
         

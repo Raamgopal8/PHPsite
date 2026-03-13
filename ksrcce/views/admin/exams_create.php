@@ -200,8 +200,10 @@
 
                     <div id="questions-container" class="space-y-4">
                         <!-- Questions will be added here dynamically -->
-                        <?php if (!empty($exam['questions'])): ?>
-                            <?php foreach ($exam['questions'] as $index => $question): ?>
+                        <?php 
+                        $displayQuestions = $questions ?? $exam['questions'] ?? [];
+                        if (!empty($displayQuestions)): ?>
+                            <?php foreach ($displayQuestions as $index => $question): ?>
                                 <div class="question-card bg-white p-4 rounded-lg border border-gray-200">
                                     <div class="flex justify-between items-center mb-3">
                                         <h3 class="text-md font-medium">Question #<span class="question-number"><?= $index + 1 ?></span></h3>

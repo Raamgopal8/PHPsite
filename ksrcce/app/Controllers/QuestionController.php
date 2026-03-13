@@ -234,9 +234,9 @@ class QuestionController extends Controller {
             $examList = [];
             foreach ($exams as $exam) {
                 $examList[] = [
-                    'id' => (string)$exam['_id'],
-                    'title' => $exam['title'],
-                    'subject' => $exam['subject'] ?? '',
+                    'id' => (string)($exam['id'] ?? $exam['_id'] ?? ''),
+                    'title' => $exam['title'] ?? '',
+                    'subject' => $exam['category'] ?? $exam['subject'] ?? '',
                     'duration' => $exam['duration'] ?? 0
                 ];
             }
