@@ -10,8 +10,8 @@ class OfficialLink extends BaseModel {
     }
 
     public function create($data) {
-        $stmt = $this->db->prepare("INSERT INTO {$this->table} (title, url) VALUES (?, ?)");
-        return $stmt->execute([$data['title'], $data['url']]);
+        $stmt = $this->db->prepare("INSERT INTO {$this->table} (title, category, url) VALUES (?, ?, ?)");
+        return $stmt->execute([$data['title'], $data['category'] ?? 'General', $data['url']]);
     }
 
     public function delete($id) {

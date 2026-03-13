@@ -35,6 +35,7 @@ class MaterialManagementController extends Controller {
 
         try {
             $title = $_POST['title'] ?? '';
+            $domain = $_POST['domain'] ?? 'GATE';
             $category = $_POST['category'] ?? '';
             $url = $_POST['url'] ?? '';
             $description = $_POST['description'] ?? '';
@@ -53,8 +54,8 @@ class MaterialManagementController extends Controller {
             }
 
             // Save to database
-            $stmt = $this->db->prepare("INSERT INTO materials (title, category, url, description) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$title, $category, $url, $description]);
+            $stmt = $this->db->prepare("INSERT INTO materials (title, domain, category, url, description) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$title, $domain, $category, $url, $description]);
 
             $_SESSION['flash']['success'] = 'Material link added successfully!';
             $this->redirect('/admin/materials');

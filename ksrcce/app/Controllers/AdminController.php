@@ -20,6 +20,10 @@ class AdminController extends Controller {
         $achievementModel = new \App\Models\Achievement($this->db);
         $achievers = $achievementModel->getAllAchievements();
 
+        // Fetch Events
+        $eventModel = new \App\Models\Event($this->db);
+        $eventsList = $eventModel->getAllEvents();
+
         $resultModel = new \App\Models\Result($this->db);
         $recentResults = $resultModel->getResults([], 1, 10); // Get first 10 results
 
@@ -27,7 +31,7 @@ class AdminController extends Controller {
         $recentLogins = [];
         try {
             $stmt = $this->db->prepare("
-                SELECT l.*, u.name 
+                SELECT l.*, u.name, u.college, u.department, u.year 
                 FROM login_logs l 
                 JOIN users u ON l.user_id = u.id 
                 ORDER BY l.login_time DESC 
@@ -50,7 +54,7 @@ class AdminController extends Controller {
             'exams' => $exams,
             'countdowns' => $countdowns,
             'achievers' => $achievers,
-            'achievers' => $achievers,
+            'eventsList' => $eventsList,
             'recentResults' => $recentResults['data'] ?? [],
             'totalResults' => $recentResults['total'] ?? 0,
             'recentLogins' => $recentLogins,
@@ -68,7 +72,7 @@ class AdminController extends Controller {
 
         try {
             $stmt = $this->db->prepare("
-                SELECT l.*, u.name, u.email 
+                SELECT l.*, u.name, u.email, u.college, u.department, u.year 
                 FROM login_logs l 
                 JOIN users u ON l.user_id = u.id 
                 ORDER BY l.login_time DESC 
@@ -157,5 +161,37 @@ class AdminController extends Controller {
         (new Question($this->db))->createQuestion($examId, $text, $options, (int)$answer, $_POST['explanation'] ?? '');
         $_SESSION['flash']['success'] = "Question added.";
         $this->redirect('/admin/dashboard');
+    }
+    public function printLogins() {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            header('Location: /login'); exit;
+        }
+
+        try {
+            $stmt = $this->db->prepare("
+                SELECT l.*, u.name, u.email, u.college, u.department, u.year 
+                FROM login_logs l 
+                JOIN users u ON l.user_id = u.id 
+                ORDER BY l.login_time DESC 
+            ");
+            $stmt->execute();
+            $logins = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            $this->view('admin/print_logins.php', ['logins' => $logins]);
+        } catch (\Exception $e) {
+            die("Error loading logs");
+        }
+    }
+
+    public function printScores() {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            header('Location: /login'); exit;
+        }
+
+        $resultModel = new \App\Models\Result($this->db);
+        $resultsData = $resultModel->getResults([], 1, 10000); // Fetch up to 10k records for printing
+        $results = $resultsData['data'] ?? [];
+        
+        $this->view('admin/print_scores.php', ['results' => $results]);
     }
 }

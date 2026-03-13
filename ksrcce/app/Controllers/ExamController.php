@@ -6,12 +6,14 @@ use App\Models\Exam;
 use App\Models\Question;
 use App\Models\Attempt;
 use App\Models\User;
+use App\Models\Result;
 
 class ExamController extends Controller {
     private $examModel;
     private $questionModel;
     private $attemptModel;
     private $userModel;
+    private $resultModel;
 
     public function __construct() {
         parent::__construct();
@@ -19,6 +21,7 @@ class ExamController extends Controller {
         $this->questionModel = new Question($this->db);
         $this->attemptModel = new Attempt($this->db);
         $this->userModel = new User($this->db);
+        $this->resultModel = new Result($this->db);
         
         // Check if user is logged in
         if (!isset($_SESSION['user'])) {
@@ -157,7 +160,7 @@ class ExamController extends Controller {
             exit;
         }
 
-        $exam = $this->examModel->findById($examId);
+        $exam = $this->examModel->getById($examId);
         if (!$exam) {
             $_SESSION['flash']['error'] = 'Exam not found';
             header('Location: /admin/exams');
@@ -246,14 +249,14 @@ class ExamController extends Controller {
     public function studentDashboard() {
         // require login
         if (!isset($_SESSION['user'])) header('Location: /login');
-        $db = $this->db;
-        $exams = $this->examModel->all();
+        $userId = $_SESSION['user']['id'] ?? $_SESSION['user']['_id'] ?? null;
+        $exams = $this->examModel->getAvailableExams($userId);
         $this->view('student/dashboard.php', ['exams' => $exams, 'user' => $_SESSION['user']]);
     }
 
     public function listExams() {
-        $db = $this->db;
-        $exams = $this->examModel->all();
+        $userId = $_SESSION['user']['id'] ?? $_SESSION['user']['_id'] ?? null;
+        $exams = $this->examModel->getAvailableExams($userId);
         $this->view('student/exams.php', ['exams' => $exams]);
     }
 
@@ -266,8 +269,7 @@ class ExamController extends Controller {
         }
         $examModel = new Exam($db);
         $questionModel = new Question($db);
-        $exam = $examModel->find(['id' => $examId]) ?: $examModel->find(['id' => ['$eq' => $examId]]);
-        // If your _id is stored as string, the first find works. If using ObjectId, adjust accordingly.
+        $exam = $examModel->getById($examId);
         $questions = $questionModel->findByExam($examId);
         $this->view('student/take_exam.php', ['exam' => $exam, 'questions' => $questions]);
     }
@@ -314,12 +316,27 @@ class ExamController extends Controller {
 
         $attemptModel->createAttempt($userId, $examId, $answers, $score);
 
+        // Save to Results table for tracking/reporting
+        $exam = $this->examModel->getById($examId);
+        $questions = $this->questionModel->findByExam($examId);
+        $totalQuestions = count($questions);
+        $percentage = $totalQuestions > 0 ? ($score / $totalQuestions) * 100 : 0;
+
+        $this->resultModel->saveResult([
+            'student_id' => $userId,
+            'student_name' => $user['name'] ?? 'Student',
+            'exam_id' => $examId,
+            'exam_title' => $exam['title'] ?? 'Exam',
+            'score' => $score,
+            'total_questions' => $totalQuestions,
+            'percentage' => $percentage
+        ]);
+
         // update streak simple logic
-        $userModel = new User($db);
-        $u = $userModel->find(['id' => $userId]);
+        $u = $this->userModel->find(['id' => $userId]);
         if ($u) {
             $streak = ($u['streak'] ?? 0) + 1;
-            $userModel->update(['id' => $u['id']], ['streak' => $streak]);
+            $this->userModel->update(['id' => $u['id']], ['streak' => $streak]);
         }
 
         $_SESSION['flash']['success'] = "Exam submitted. Score: {$score}";

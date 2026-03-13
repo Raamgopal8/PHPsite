@@ -67,8 +67,9 @@
 <div class="min-h-screen bg-[url('/assets/background.jpg')] bg-fixed bg-cover bg-center">
     <div class="flex min-h-screen bg-gray-900/80 backdrop-blur-sm">
         
-        <!-- Sidebar Navigation -->
-        <aside class="hidden lg:flex flex-col w-64 glass-sidebar fixed inset-y-0 left-0 z-40 pt-28 pb-6 overflow-y-auto">
+        <!-- Sidebar for Desktop -->
+        <aside class="lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col glass-sidebar print:hidden">
+            <div class="flex flex-col flex-grow bg-gray-900/40 pt-5 pb-4 overflow-y-auto custom-scrollbar">
             <div class="px-6 mb-8">
                 <div class="flex items-center space-x-3 mb-6">
                     <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
@@ -106,34 +107,13 @@
                     </svg>
                     Achievements
                 </a>
-                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                    <a href="/admin/exams/create" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0 0h6m-6 0H6" />
-                        </svg>
-                        Create Exams
-                    </a>
-                    <a href="/admin/exam-countdowns" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Exam Countdowns
-                    </a>
-                    <a href="/admin/achievements" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 001.745.723 3.066 3.066 0 002.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 00-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 00-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 00-2.812 2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        Achievements
-                    </a>
-                    <a href="/admin/add-question" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 0h6m-6 0h6m-6 0h6" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Add Question
-                    </a>
-                </div>
-            </nav>
+                <a href="/admin/events" class="nav-item <?= str_contains($_SERVER['REQUEST_URI'], '/admin/events') ? 'active' : 'text-gray-300' ?> flex items-center px-4 py-3 text-sm font-medium rounded-xl hover:text-white">
+                    <svg class="h-5 w-5 mr-3 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Events
+                </a>
+                            </nav>
             
 
         </aside>
@@ -175,7 +155,7 @@
                             </div>
                             <div class="flex items-baseline gap-2">
                                 <span class="text-3xl font-bold text-white"><?= count($exams) ?></span>
-                                <span class="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-full">+2 this week</span>
+                               
                             </div>
                         </div>
                     </div>
@@ -223,7 +203,10 @@
                         <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-yellow-500/20 rounded-full blur-2xl group-hover:bg-yellow-500/30 transition-all duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-gray-400 text-sm font-medium">Achievers</h3>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-gray-400 text-sm font-medium">Achievers</h3>
+                                    <a href="/admin/achievements" class="ml-2 bg-yellow-500/20 hover:bg-yellow-500 text-yellow-400 hover:text-white px-2 py-0.5 rounded text-[10px] font-bold transition-colors uppercase tracking-wider">Add</a>
+                                </div>
                                 <span class="p-2 bg-yellow-500/10 rounded-lg text-yellow-400">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -234,6 +217,73 @@
                                 <span class="text-3xl font-bold text-white"><?= count($achievers ?? []) ?></span>
                                 <span class="text-xs text-gray-500">Students</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Events -->
+                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-500/20 rounded-full blur-2xl group-hover:bg-indigo-500/30 transition-all duration-500"></div>
+                        <div class="relative">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-gray-400 text-sm font-medium">Events</h3>
+                                    <a href="/admin/events" class="ml-2 bg-indigo-500/20 hover:bg-indigo-500 text-indigo-400 hover:text-white px-2 py-0.5 rounded text-[10px] font-bold transition-colors uppercase tracking-wider">Add</a>
+                                </div>
+                                <span class="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-3xl font-bold text-white"><?= count($eventsList ?? []) ?></span>
+                                <span class="text-xs text-gray-500">Moments</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unified Domain Management -->
+                <div class="glass-card rounded-2xl p-8 mb-8 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5 opacity-50"></div>
+                    
+                    <div class="relative flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-white mb-2">Competitive Exams Management</h2>
+                            <p class="text-gray-400 text-sm mb-6">Centralized control for GATE, TNPSC, Banking, and UPSC syllabus and materials.</p>
+                            
+                            <div class="flex flex-wrap gap-4 mb-2">
+                                <?php
+                                $domains = [
+                                    ['name' => 'GATE', 'image' => '/assets/gate.png', 'url' => '/student/gate'],
+                                    ['name' => 'TNPSC', 'image' => '/assets/tnpsc.png', 'url' => '/student/tnpsc'],
+                                    ['name' => 'Banking', 'image' => '/assets/Bank.png', 'url' => '/student/banking'],
+                                    ['name' => 'UPSC', 'image' => '/assets/upsc.jpeg', 'url' => '/student/upsc']
+                                ];
+                                foreach($domains as $d): ?>
+                                    <a href="<?= $d['url'] ?>" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 group/item hover:bg-white/10 hover:border-blue-500/30 transition-all">
+                                        <div class="w-6 h-6 rounded-md overflow-hidden bg-white/10">
+                                            <img src="<?= $d['image'] ?>" alt="<?= $d['name'] ?>" class="w-full h-full object-cover">
+                                        </div>
+                                        <span class="text-xs font-bold text-gray-300 group-hover/item:text-white"><?= $d['name'] ?></span>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                            <a href="/admin/syllabi" class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition-all shadow-lg shadow-blue-500/25 group/btn">
+                                <svg class="w-5 h-5 mr-2 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Syllabus Management
+                            </a>
+                            <a href="/admin/materials" class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all shadow-lg shadow-indigo-500/25 group/btn2">
+                                <svg class="w-5 h-5 mr-2 group-hover/btn2:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                                Materials Management
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -271,25 +321,39 @@
                      <div class="glass-card rounded-2xl p-6">
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-lg font-bold text-white">Student Logins</h2>
-                            <span class="text-xs text-gray-500">Last 24 hours</span>
+                            <div class="flex gap-4 items-center">
+                                <span class="text-xs text-gray-500">Last 24 hours</span>
+                                <a href="/admin/logins/print" target="_blank" class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full transition-colors font-medium flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                    Print All
+                                </a>
+                            </div>
                         </div>
                         <div class="overflow-x-auto overflow-y-auto max-h-96 custom-scrollbar">
                             <table class="w-full relative">
                                 <thead class="bg-gray-800/90 backdrop-blur sticky top-0 z-10">
                                     <tr>
                                         <th class="px-4 py-2 text-left text-xs font-semibold text-gray-400">Student</th>
+                                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-400">Details</th>
                                         <th class="px-4 py-2 text-left text-xs font-semibold text-gray-400">Time</th>
                                     </tr>
                                 </thead>
                                 <tbody id="recent-logins-body" class="divide-y divide-white/5">
                                 <?php if(empty($recentLogins)): ?>
-                                     <tr><td colspan="2" class="px-4 py-4 text-center text-xs text-gray-500">No activity found</td></tr>
+                                     <tr><td colspan="3" class="px-4 py-4 text-center text-xs text-gray-500">No activity found</td></tr>
                                 <?php else: ?>
                                     <?php foreach($recentLogins as $login): ?>
                                         <tr class="hover:bg-white/5 transition-colors">
                                             <td class="px-4 py-2 border-b border-white/5">
                                                 <div class="text-sm font-medium text-white"><?= htmlspecialchars($login['name']) ?></div>
                                                 <div class="text-xs text-gray-500"><?= $login['ip_address'] ?? '' ?></div>
+                                            </td>
+                                            <td class="px-4 py-2 border-b border-white/5">
+                                                <div class="text-xs text-gray-300">
+                                                    <?= htmlspecialchars($login['year'] ? "Year {$login['year']}" : '') ?> 
+                                                    <?= htmlspecialchars($login['department'] ?? '') ?>
+                                                </div>
+                                                <div class="text-xs text-gray-500"><?= htmlspecialchars($login['college'] ?? '') ?></div>
                                             </td>
                                             <td class="px-4 py-2 border-b border-white/5 text-xs text-gray-400">
                                                 <?= date('M d, H:i', strtotime($login['login_time'])) ?>
@@ -303,88 +367,65 @@
                     </div>
                 </div>
 
-                <!-- Two Column Layout (Countdowns & Achievements) -->
+                <!-- Gallery Widgets Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <!-- Countdowns -->
-                    <div class="glass-card rounded-2xl p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-lg font-bold text-white">Active Exam Countdowns</h2>
-                            <a href="/admin/exam-countdowns" class="text-xs text-blue-400 hover:text-blue-300 font-medium">View All &rarr;</a>
+                    <!-- Achievers Gallery (Hall of Fame) -->
+                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden group flex flex-col items-center justify-center text-center">
+                        <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center mb-4 border border-yellow-500/30">
+                            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2-3-.895-3-2 1.343-2 3-2zm0 0v-4m0 16a9 9 0 110-18 9 9 0 010 18z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12.5a5.5 5.5 0 01-8 0" />
+                            </svg>
                         </div>
-                        <div class="space-y-3 overflow-y-auto max-h-64 custom-scrollbar">
-                            <?php if(empty($countdowns)): ?>
-                                <p class="text-sm text-gray-400 text-center py-4">No active countdowns</p>
-                            <?php else: ?>
-                                <?php foreach(array_slice($countdowns, 0, 3) as $cd): ?>
-                                    <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-10 rounded-lg bg-gray-800 flex flex-col items-center justify-center text-xs font-bold border border-white/10">
-                                                <span class="text-blue-400"><?= date('M', strtotime($cd['exam_date'])) ?></span>
-                                                <span class="text-white"><?= date('d', strtotime($cd['exam_date'])) ?></span>
-                                            </div>
-                                            <div>
-                                                <h4 class="text-sm font-medium text-white"><?= htmlspecialchars($cd['exam_name'] ?? 'Untitled Exam') ?></h4>
-                                                <p class="text-xs text-gray-500"><?= $cd['is_active'] ? 'Active' : 'Hidden' ?></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
+                        <h2 class="text-xl font-bold text-white mb-2 relative z-10">Hall of Fame</h2>
+                        <p class="text-sm text-gray-400 mb-6 relative z-10">Explore our top achievers across all batch years.</p>
+                        <a href="/achievers/gallery" class="relative z-10 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-full transition-colors shadow-lg shadow-yellow-500/20">View Achievers Gallery</a>
                     </div>
 
-                    <!-- Achievements -->
-                    <div class="glass-card rounded-2xl p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-lg font-bold text-white">Recent Achievements</h2>
-                            <a href="/admin/achievements" class="text-xs text-green-400 hover:text-green-300 font-medium">View All &rarr;</a>
+                    <!-- Campus Events Gallery -->
+                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden group flex flex-col items-center justify-center text-center">
+                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="w-16 h-16 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4 border border-indigo-500/30">
+                            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
                         </div>
-                        <div class="space-y-3 overflow-y-auto max-h-64 custom-scrollbar">
-                            <?php if(empty($achievers)): ?>
-                                <p class="text-sm text-gray-400 text-center py-4">No achievements yet</p>
-                            <?php else: ?>
-                                <?php foreach(array_slice($achievers ?? [], 0, 3) as $achiever): ?>
-                                    <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                        <div class="h-10 w-10 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center text-green-400 font-bold border border-green-500/20">
-                                            <?= substr($achiever['name'], 0, 1) ?>
-                                        </div>
-                                        <div class="min-w-0">
-                                            <h4 class="text-sm font-medium text-white truncate"><?= htmlspecialchars($achiever['name']) ?></h4>
-                                            <p class="text-xs text-gray-400 truncate"><?= htmlspecialchars($achiever['rank_text'] ?? $achiever['description']) ?></p>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
+                        <h2 class="text-xl font-bold text-white mb-2 relative z-10">Campus Events</h2>
+                        <p class="text-sm text-gray-400 mb-6 relative z-10">Relive the moments and explore our campus activities.</p>
+                        <a href="/events/gallery" class="relative z-10 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-full transition-colors shadow-lg shadow-indigo-500/20">View Events Gallery</a>
                     </div>
                 </div>
 
-                <!-- Domains Grid -->
-                <h2 class="text-xl font-bold text-white mb-6 px-1">Domain Management</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <?php
-                    $domains = [
-                        ['name' => 'GATE', 'color' => 'blue', 'image' => '/assets/gate.png'],
-                        ['name' => 'TNPSC', 'color' => 'green', 'image' => '/assets/tnpsc.png'],
-                        ['name' => 'Banking', 'color' => 'indigo', 'image' => '/assets/Bank.png'],
-                        ['name' => 'UPSC', 'color' => 'orange', 'image' => '/assets/upsc.jpeg']
-                    ];
-                    
-                    foreach($domains as $d): 
-                        $color = $d['color'];
-                    ?>
-                    <div class="glass-card rounded-2xl p-6 group hover:border-<?= $color ?>-500/30">
-                        <div class="w-16 h-16 rounded-xl bg-<?= $color ?>-500/10 flex items-center justify-center mb-4 group-hover:bg-<?= $color ?>-500/20 transition-colors overflow-hidden">
-                            <img src="<?= $d['image'] ?>" alt="<?= $d['name'] ?>" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
-                        </div>
-                        <h3 class="text-lg font-bold text-white mb-4"><?= $d['name'] ?></h3>
-                        <div class="space-y-2">
-                             <a href="/admin/syllabi?category=<?= $d['name'] ?>" class="block w-full text-center py-2 rounded-lg bg-white/5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">Syllabus</a>
-                             <a href="/admin/materials?category=<?= $d['name'] ?>" class="block w-full text-center py-2 rounded-lg bg-white/5 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors">Materials</a>
-                        </div>
+                <!-- Exam Countdowns (Moved to full width or separate section) -->
+                <div class="glass-card rounded-2xl p-6 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-bold text-white">Active Exam Countdowns</h2>
+                        <a href="/admin/exam-countdowns" class="text-xs text-blue-400 hover:text-blue-300 font-medium">View All &rarr;</a>
                     </div>
-                    <?php endforeach; ?>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto max-h-64 custom-scrollbar">
+                        <?php if(empty($countdowns)): ?>
+                            <p class="text-sm text-gray-400 text-center py-4 col-span-full">No active countdowns</p>
+                        <?php else: ?>
+                            <?php foreach(array_slice($countdowns, 0, 6) as $cd): ?>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-10 w-10 rounded-lg bg-gray-800 flex flex-col items-center justify-center text-xs font-bold border border-white/10">
+                                            <span class="text-blue-400"><?= date('M', strtotime($cd['exam_date'])) ?></span>
+                                            <span class="text-white"><?= date('d', strtotime($cd['exam_date'])) ?></span>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-medium text-white"><?= htmlspecialchars($cd['exam_name'] ?? 'Untitled Exam') ?></h4>
+                                            <p class="text-xs text-gray-500"><?= $cd['is_active'] ? 'Active' : 'Hidden' ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
+
+
 
                 <!-- Recent Activities & Live Scores -->
                 <div class="grid grid-cols-1 gap-8">
@@ -396,6 +437,10 @@
                                 <p class="text-sm text-gray-400">Real-time submission updates</p>
                             </div>
                             <div class="flex items-center space-x-3">
+                                <a href="/admin/scores/print" target="_blank" class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-full transition-colors font-medium flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2-2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                    Print All
+                                </a>
                                 <span id="last-updated" class="text-xs text-gray-500 font-mono">Syncing...</span>
                                 <button onclick="fetchResults()" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
                                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -450,7 +495,7 @@
                     <!-- Official Links Manager -->
                     <div class="glass-card rounded-2xl p-6">
                         <h2 class="text-lg font-bold text-white mb-6">Quick Links Manager</h2>
-                        <form id="add-link-form" class="flex flex-col md:flex-row gap-4 mb-6">
+                        <form id="add-link-form" action="/admin/official-links/store" method="POST" class="flex flex-col md:flex-row gap-4 mb-6">
                             <input type="text" name="title" placeholder="Title" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors" required>
                             <select name="category" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-blue-500">
                                 <option value="GATE" class="bg-gray-900 text-white">GATE</option>

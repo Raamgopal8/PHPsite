@@ -58,6 +58,10 @@ class BaseModel {
     }
 
     public function delete($conditions) {
+        if (!is_array($conditions)) {
+            $conditions = ['id' => $conditions];
+        }
+
         $where = [];
         $params = [];
         
@@ -69,5 +73,19 @@ class BaseModel {
         $sql = "DELETE FROM {$this->table} WHERE " . implode(' AND ', $where);
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
+    }
+
+    /**
+     * Check if a column exists in the table
+     */
+    public function columnExists($columnName) {
+        try {
+            // Use DESCRIBE instead of SHOW COLUMNS for better compatibility
+            $stmt = $this->db->query("DESCRIBE {$this->table}");
+            $columns = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0); // Get first column (Field names)
+            return in_array($columnName, $columns);
+        } catch (\PDOException $e) {
+            return false;
+        }
     }
 }

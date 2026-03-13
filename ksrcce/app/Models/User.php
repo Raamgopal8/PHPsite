@@ -8,11 +8,14 @@ class User extends BaseModel {
         parent::__construct($db);
     }
 
-    public function create($name, $email, $password, $role='student') {
+    public function create($name, $email, $password, $college = null, $department = null, $year = null, $role='student') {
         $doc = [
             'name' => $name,
             'email' => $email,
             'password' => password_hash($password, PASSWORD_BCRYPT),
+            'college' => $college,
+            'department' => $department,
+            'year' => $year,
             'role' => $role,
             'streak' => 0,
             'created_at' => date('c')

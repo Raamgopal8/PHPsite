@@ -36,6 +36,7 @@ class SyllabusManagementController extends Controller {
 
         try {
             $title = $_POST['title'] ?? '';
+            $domain = $_POST['domain'] ?? 'GATE';
             $subject = $_POST['subject'] ?? '';
             $url = $_POST['url'] ?? '';
 
@@ -53,8 +54,8 @@ class SyllabusManagementController extends Controller {
             }
 
             // Save to database
-            $stmt = $this->db->prepare("INSERT INTO syllabi (title, subject, url) VALUES (?, ?, ?)");
-            $stmt->execute([$title, $subject, $url]);
+            $stmt = $this->db->prepare("INSERT INTO syllabi (title, domain, subject, url) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$title, $domain, $subject, $url]);
 
             $_SESSION['flash']['success'] = 'Syllabus link added successfully!';
             $this->redirect('/admin/syllabi');

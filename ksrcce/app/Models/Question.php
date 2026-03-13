@@ -61,18 +61,35 @@ class Question extends BaseModel
      * Create a new question
      */
     public function create($data) {
-        $stmt = $this->db->prepare("
-            INSERT INTO questions (exam_id, question_text, options, correct_answer, explanation, question_image) 
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-        return $stmt->execute([
-            $data['exam_id'],
-            $data['question_text'] ?? $data['text'] ?? '',
-            json_encode($data['options']),
-            $data['correct_answer'] ?? $data['answer'] ?? 0,
-            $data['explanation'] ?? null,
-            $data['question_image'] ?? $data['image'] ?? null
-        ]);
+        // Check if question_image column exists
+        $hasQuestionImage = $this->columnExists('question_image');
+        
+        if ($hasQuestionImage) {
+            $stmt = $this->db->prepare("
+                INSERT INTO questions (exam_id, question_text, options, correct_answer, explanation, question_image) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            return $stmt->execute([
+                $data['exam_id'],
+                $data['question_text'] ?? $data['text'] ?? '',
+                json_encode($data['options']),
+                $data['correct_answer'] ?? $data['answer'] ?? 0,
+                $data['explanation'] ?? null,
+                $data['question_image'] ?? $data['image'] ?? null
+            ]);
+        } else {
+            $stmt = $this->db->prepare("
+                INSERT INTO questions (exam_id, question_text, options, correct_answer, explanation) 
+                VALUES (?, ?, ?, ?, ?)
+            ");
+            return $stmt->execute([
+                $data['exam_id'],
+                $data['question_text'] ?? $data['text'] ?? '',
+                json_encode($data['options']),
+                $data['correct_answer'] ?? $data['answer'] ?? 0,
+                $data['explanation'] ?? null
+            ]);
+        }
     }
 
     /**
@@ -92,24 +109,46 @@ class Question extends BaseModel
      * Update a question
      */
     public function update($conditions, $data) {
-        // If $conditions is not an array, assume it's the ID
-        if (!is_array($conditions)) {
-            $conditions = ['id' => $conditions];
-        }
+        $id = is_array($conditions) ? $conditions['id'] : $conditions;
+        
+        $examId = $data['exam_id'] ?? null;
+        $questionText = $data['question_text'] ?? '';
+        $options = $data['options'] ?? [];
+        $correctAnswer = $data['correct_answer'] ?? 0;
+        $explanation = $data['explanation'] ?? null;
+        $questionImage = $data['question_image'] ?? null;
 
-        $stmt = $this->db->prepare("
-            UPDATE questions 
-            SET question_text = ?, options = ?, correct_answer = ?, explanation = ?, question_image = ?, updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        ");
-        return $stmt->execute([
-            $data['question_text'] ?? $data['text'] ?? '',
-            json_encode($data['options']),
-            $data['correct_answer'] ?? $data['answer'] ?? 0,
-            $data['explanation'] ?? null,
-            $data['question_image'] ?? $data['image'] ?? null,
-            $conditions['id']
-        ]);
+        // Check if question_image column exists
+        $hasQuestionImage = $this->columnExists('question_image');
+        
+        if ($hasQuestionImage) {
+            $stmt = $this->db->prepare("
+                UPDATE questions 
+                SET question_text = ?, options = ?, correct_answer = ?, explanation = ?, question_image = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            ");
+            return $stmt->execute([
+                $questionText,
+                json_encode($options),
+                $correctAnswer,
+                $explanation,
+                $questionImage,
+                $id
+            ]);
+        } else {
+            $stmt = $this->db->prepare("
+                UPDATE questions 
+                SET question_text = ?, options = ?, correct_answer = ?, explanation = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            ");
+            return $stmt->execute([
+                $questionText,
+                json_encode($options),
+                $correctAnswer,
+                $explanation,
+                $id
+            ]);
+        }
     }
 
     /**

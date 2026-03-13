@@ -55,11 +55,15 @@ class AuthController extends Controller {
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $pwd = $_POST['password'] ?? '';
+        $college = $_POST['college'] ?? null;
+        $department = $_POST['department'] ?? null;
+        $year = $_POST['year'] ?? null;
+        
         if ($userModel->findByEmail($email)) {
             $_SESSION['flash']['error'] = "Email already registered";
             $this->redirect('/register');
         }
-        $userModel->create($name, $email, $pwd, 'student');
+        $userModel->create($name, $email, $pwd, $college, $department, $year, 'student');
         $_SESSION['flash']['success'] = "Registration complete. Login.";
         $this->redirect('/login');
     }

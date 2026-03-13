@@ -2,13 +2,13 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
-use App\Models\Achievement;
+use App\Models\Event;
 
-class AchievementController extends Controller {
+class EventController extends Controller {
     
     public function __construct() {
         parent::__construct();
-        // Require authentication for all achievement actions
+        // Require authentication for all event actions
         if (!isset($_SESSION['user'])) {
             http_response_code(401);
             echo json_encode(['error' => 'Unauthorized']);
@@ -17,7 +17,7 @@ class AchievementController extends Controller {
     }
     
     public function index() {
-        // Only admins can manage achievements
+        // Only admins can manage events
         if ($_SESSION['user']['role'] !== 'admin') {
             http_response_code(403);
             echo json_encode(['error' => 'Forbidden']);
@@ -28,13 +28,13 @@ class AchievementController extends Controller {
         $limit = 20;
         $offset = ($page - 1) * $limit;
         
-        $achievementModel = new Achievement($this->db);
-        $achievements = $achievementModel->getAll($limit, $offset);
-        $totalCount = $achievementModel->getTotalCount();
+        $eventModel = new Event($this->db);
+        $events = $eventModel->getAll($limit, $offset);
+        $totalCount = $eventModel->getTotalCount();
         $totalPages = ceil($totalCount / $limit);
         
-        $this->view('admin/achievements.php', [
-            'achievements' => $achievements,
+        $this->view('admin/events.php', [
+            'events' => $events,
             'currentPage' => $page,
             'totalPages' => $totalPages,
             'totalCount' => $totalCount
@@ -42,7 +42,7 @@ class AchievementController extends Controller {
     }
     
     public function create() {
-        // Only admins can create achievements
+        // Only admins can create events
         if ($_SESSION['user']['role'] !== 'admin') {
             http_response_code(403);
             echo json_encode(['error' => 'Forbidden']);
@@ -55,59 +55,52 @@ class AchievementController extends Controller {
             exit;
         }
         
-        $achievementModel = new Achievement($this->db);
+        $eventModel = new Event($this->db);
         
         try {
-            $studentName = $_POST['student_name'] ?? '';
-            $examName = $_POST['exam_name'] ?? '';
-            $rankOrScore = $_POST['rank_or_score'] ?? '';
-            $description = $_POST['achievement_description'] ?? null;
-            $batchYear = $_POST['batch_year'] ?? null;
-            $department = $_POST['department'] ?? null;
+            $title = $_POST['title'] ?? '';
+            $eventDate = $_POST['event_date'] ?? '';
+            $description = $_POST['description'] ?? null;
             $isFeatured = isset($_POST['is_featured']);
             
-            if (empty($studentName) || empty($examName) || empty($rankOrScore)) {
-                throw new \Exception('Student name, exam name, and rank/score are required');
+            if (empty($title) || empty($eventDate)) {
+                throw new \Exception('Title and Event Date are required');
             }
             
             // Handle image upload
             $imageUrl = null;
-            if (isset($_FILES['achievement_image'])) {
-                $fileError = $_FILES['achievement_image']['error'];
+            if (isset($_FILES['event_image'])) {
+                $fileError = $_FILES['event_image']['error'];
                 if ($fileError === UPLOAD_ERR_OK) {
-                    $imageUrl = $achievementModel->uploadImage($_FILES['achievement_image']);
+                    $imageUrl = $eventModel->uploadImage($_FILES['event_image']);
                 } elseif ($fileError !== UPLOAD_ERR_NO_FILE) {
-                    // unexpected error
                     throw new \Exception('File upload failed with error code: ' . $fileError);
                 }
             }
             
-            $success = $achievementModel->create(
-                $studentName,
-                $examName,
-                $rankOrScore,
+            $success = $eventModel->create(
+                $title,
+                $eventDate,
                 $description,
                 $imageUrl,
-                $batchYear,
-                $department,
                 $isFeatured
             );
             
             if ($success) {
-                $_SESSION['flash']['success'] = 'Achievement added successfully!';
+                $_SESSION['flash']['success'] = 'Event added successfully!';
             } else {
-                $_SESSION['flash']['error'] = 'Failed to add achievement';
+                $_SESSION['flash']['error'] = 'Failed to add event';
             }
             
         } catch (\Exception $e) {
             $_SESSION['flash']['error'] = $e->getMessage();
         }
         
-        $this->redirect('/admin/achievements');
+        $this->redirect('/admin/events');
     }
     
     public function update() {
-        // Only admins can update achievements
+        // Only admins can update events
         if ($_SESSION['user']['role'] !== 'admin') {
             http_response_code(403);
             echo json_encode(['error' => 'Forbidden']);
@@ -120,69 +113,63 @@ class AchievementController extends Controller {
             exit;
         }
         
-        $achievementModel = new Achievement($this->db);
+        $eventModel = new Event($this->db);
         
         try {
             $id = $_POST['id'] ?? null;
-            $studentName = $_POST['student_name'] ?? '';
-            $examName = $_POST['exam_name'] ?? '';
-            $rankOrScore = $_POST['rank_or_score'] ?? '';
-            $description = $_POST['achievement_description'] ?? null;
-            $batchYear = $_POST['batch_year'] ?? null;
-            $department = $_POST['department'] ?? null;
+            $title = $_POST['title'] ?? '';
+            $eventDate = $_POST['event_date'] ?? '';
+            $description = $_POST['description'] ?? null;
             $isFeatured = isset($_POST['is_featured']);
             $isActive = isset($_POST['is_active']);
             
-            if (!$id || empty($studentName) || empty($examName) || empty($rankOrScore)) {
-                throw new \Exception('ID, student name, exam name, and rank/score are required');
+            if (!$id || empty($title) || empty($eventDate)) {
+                throw new \Exception('ID, Title, and Event Date are required');
             }
             
-            // Get existing achievement to handle image
-            $existing = $achievementModel->getById($id);
+            // Get existing event to handle image
+            $existing = $eventModel->getById($id);
             $imageUrl = $existing['image_url'] ?? null;
             
             // Handle new image upload
-            if (isset($_FILES['achievement_image'])) {
-                $fileError = $_FILES['achievement_image']['error'];
+            if (isset($_FILES['event_image'])) {
+                $fileError = $_FILES['event_image']['error'];
                 if ($fileError === UPLOAD_ERR_OK) {
                     // Delete old image if exists
                     if ($imageUrl) {
-                        $achievementModel->deleteImage($imageUrl);
+                        $eventModel->deleteImage($imageUrl);
                     }
-                    $imageUrl = $achievementModel->uploadImage($_FILES['achievement_image']);
+                    $imageUrl = $eventModel->uploadImage($_FILES['event_image']);
                 } elseif ($fileError !== UPLOAD_ERR_NO_FILE) {
                     throw new \Exception('File upload failed with error code: ' . $fileError);
                 }
             }
             
-            $success = $achievementModel->update(
+            $success = $eventModel->update(
                 $id,
-                $studentName,
-                $examName,
-                $rankOrScore,
+                $title,
+                $eventDate,
                 $description,
                 $imageUrl,
-                $batchYear,
-                $department,
                 $isFeatured,
                 $isActive
             );
             
             if ($success) {
-                $_SESSION['flash']['success'] = 'Achievement updated successfully!';
+                $_SESSION['flash']['success'] = 'Event updated successfully!';
             } else {
-                $_SESSION['flash']['error'] = 'Failed to update achievement';
+                $_SESSION['flash']['error'] = 'Failed to update event';
             }
             
         } catch (\Exception $e) {
             $_SESSION['flash']['error'] = $e->getMessage();
         }
         
-        $this->redirect('/admin/achievements');
+        $this->redirect('/admin/events');
     }
     
     public function delete() {
-        // Only admins can delete achievements
+        // Only admins can delete events
         if ($_SESSION['user']['role'] !== 'admin') {
             http_response_code(403);
             echo json_encode(['error' => 'Forbidden']);
@@ -204,22 +191,21 @@ class AchievementController extends Controller {
             exit;
         }
         
-        $achievementModel = new Achievement($this->db);
+        $eventModel = new Event($this->db);
         
-        // Get achievement to delete associated image
-        $achievement = $achievementModel->getById($id);
-        if ($achievement && $achievement['image_url']) {
-            $achievementModel->deleteImage($achievement['image_url']);
+        // Get event to delete associated image
+        $event = $eventModel->getById($id);
+        if ($event && $event['image_url']) {
+            $eventModel->deleteImage($event['image_url']);
         }
         
-        $success = $achievementModel->delete($id);
+        $success = $eventModel->delete($id);
         
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
     }
     
     public function toggleStatus() {
-        // Only admins can toggle achievements
         if ($_SESSION['user']['role'] !== 'admin') {
             http_response_code(403);
             echo json_encode(['error' => 'Forbidden']);
@@ -241,15 +227,14 @@ class AchievementController extends Controller {
             exit;
         }
         
-        $achievementModel = new Achievement($this->db);
-        $success = $achievementModel->toggleStatus($id);
+        $eventModel = new Event($this->db);
+        $success = $eventModel->toggleStatus($id);
         
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
     }
     
     public function toggleFeatured() {
-        // Only admins can toggle featured status
         if ($_SESSION['user']['role'] !== 'admin') {
             http_response_code(403);
             echo json_encode(['error' => 'Forbidden']);
@@ -271,32 +256,31 @@ class AchievementController extends Controller {
             exit;
         }
         
-        $achievementModel = new Achievement($this->db);
-        $success = $achievementModel->toggleFeatured($id);
+        $eventModel = new Event($this->db);
+        $success = $eventModel->toggleFeatured($id);
         
         header('Content-Type: application/json');
         echo json_encode(['success' => $success]);
     }
     
-    public function getAchievementById() {
+    public function getEventById() {
         $id = $_GET['id'] ?? null;
-        $achievementModel = new Achievement($this->db);
-        $achievement = $achievementModel->getById($id);
+        $eventModel = new Event($this->db);
+        $event = $eventModel->getById($id);
         
-        if ($achievement) {
+        if ($event) {
             header('Content-Type: application/json');
-            echo json_encode(['achievement' => $achievement]);
+            echo json_encode(['event' => $event]);
         } else {
             http_response_code(404);
-            echo json_encode(['error' => 'Achievement not found']);
+            echo json_encode(['error' => 'Event not found']);
         }
     }
     
-    public function getAchievements() {
-        // Get achievements for students
-        $achievementModel = new Achievement($this->db);
-        $featured = $achievementModel->getFeatured(6);
-        $recent = $achievementModel->getRecent(12);
+    public function getEvents() {
+        $eventModel = new Event($this->db);
+        $featured = $eventModel->getFeatured(6);
+        $recent = $eventModel->getRecent(12);
         
         header('Content-Type: application/json');
         echo json_encode([
@@ -304,28 +288,28 @@ class AchievementController extends Controller {
             'recent' => $recent
         ]);
     }
-    public function publicGallery() {
-        // This is a public/student-facing view of achievements
-        $achievementModel = new Achievement($this->db);
-        
-        $stmt = $this->db->prepare("SELECT * FROM achievements WHERE is_active = 1 ORDER BY batch_year DESC, created_at DESC");
-        $stmt->execute();
-        $allAchievements = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        // Group by batch_year
-        $achieversByYear = [];
-        foreach ($allAchievements as $ach) {
-            $year = $ach['batch_year'] ? $ach['batch_year'] : 'Other';
-            if (!isset($achieversByYear[$year])) {
-                $achieversByYear[$year] = [];
+    public function publicGallery() {
+        // Public/student-facing view of events
+        $eventModel = new Event($this->db);
+        
+        $stmt = $this->db->prepare("SELECT * FROM events WHERE is_active = 1 ORDER BY event_date DESC, created_at DESC");
+        $stmt->execute();
+        $allEvents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Group by year (using purely the year format of event_date instead of a custom batch year)
+        $eventsByYear = [];
+        foreach ($allEvents as $ev) {
+            $year = $ev['event_date'] ? date('Y', strtotime($ev['event_date'])) : 'Other';
+            if (!isset($eventsByYear[$year])) {
+                $eventsByYear[$year] = [];
             }
-            $achieversByYear[$year][] = $ach;
+            $eventsByYear[$year][] = $ev;
         }
 
-        // Sort the years descending (just in case)
-        krsort($achieversByYear);
+        krsort($eventsByYear);
 
-        $this->view('achievers_gallery.php', ['achieversByYear' => $achieversByYear]);
+        $this->view('events_gallery.php', ['eventsByYear' => $eventsByYear]);
     }
 }
 ?>

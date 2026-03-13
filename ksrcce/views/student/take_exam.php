@@ -42,7 +42,7 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
                             <?= $i + 1 ?>
                         </div>
                         <div class="ml-4 flex-1">
-                            <h3 class="text-lg font-medium text-white mb-4"><?= htmlspecialchars($q['text'] ?? $q['question_text'] ?? '') ?></h3>
+                            <h3 class="text-lg font-medium text-white mb-4"><?= htmlspecialchars($q['question_text'] ?? '') ?></h3>
                             
                             <?php if (!empty($q['question_image'])): ?>
                                 <div class="mb-4">

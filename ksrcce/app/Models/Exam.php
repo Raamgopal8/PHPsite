@@ -22,4 +22,13 @@ class Exam extends BaseModel {
     public function getById($id) {
         return $this->find(['id' => $id]);
     }
+
+    public function getAvailableExams($userId) {
+        $sql = "SELECT * FROM {$this->table} 
+                WHERE status = 'active' 
+                AND id NOT IN (SELECT exam_id FROM attempts WHERE user_id = ?)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

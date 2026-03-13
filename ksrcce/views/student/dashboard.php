@@ -197,6 +197,7 @@
                             <h2 class="text-xl font-bold text-white">Hall of Fame</h2>
                             <p class="text-sm text-gray-400">Top performers and achievers</p>
                         </div>
+                        <a href="/achievers/gallery" class="text-sm font-medium text-yellow-400 hover:text-yellow-300 hover:underline">View All Achievers</a>
                     </div>
                     <div id="featured-achievements" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Featured achievements will be loaded here -->
@@ -208,10 +209,46 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Campus Events -->
+                <div class="bg-gray-900/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-xl font-bold text-white">Campus Events</h2>
+                            <p class="text-sm text-gray-400">Recent activities and moments</p>
+                        </div>
+                        <a href="/events/gallery" class="text-sm font-medium text-indigo-400 hover:text-indigo-300 hover:underline">View All Events</a>
+                    </div>
+                    <div id="featured-events" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Featured events will be loaded here -->
+                        <div class="col-span-full text-center py-12 rounded-2xl bg-gray-800/30 border border-dashed border-gray-700">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-500">Loading events...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Sidebar -->
             <div class="space-y-8">
+                <!-- Recent Campus Events -->
+                <div class="bg-gray-900/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-xl font-bold text-white">Events</h2>
+                            <p class="text-sm text-gray-400">Join our vibrant activities</p>
+                        </div>
+                        <a href="/events/gallery" class="text-sm font-medium text-indigo-400 hover:text-indigo-300 hover:underline">View All</a>
+                    </div>
+                    <div id="sidebar-events" class="space-y-4">
+                        <div class="text-center py-6 text-gray-500">
+                             <p class="text-sm">Loading events...</p>
+                        </div>
+                    </div>
+                </div>
+
                  <!-- Official Links -->
                 <div class="bg-gray-900/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10">
                     <div class="flex items-center justify-between mb-8">
@@ -259,21 +296,6 @@
 
 
 
-                <!-- Recent Achievements -->
-                <div class="bg-gray-900/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10">
-                     <div class="flex items-center justify-between mb-8">
-                        <div>
-                            <h2 class="text-xl font-bold text-white">Recent</h2>
-                            <p class="text-sm text-gray-400">Latest achievements</p>
-                        </div>
-                    </div>
-                    <div id="recent-achievements" class="space-y-4">
-                        <!-- Recent achievements will be loaded here -->
-                        <div class="text-center py-8 text-gray-500">
-                            <p class="text-sm">Loading...</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 </div>
@@ -388,11 +410,77 @@ function updateCountdowns() {
     });
 }
 
-// Load achievements when page loads
+// Load achievements and events when page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadExamCountdowns();
     loadAchievements();
+    loadEvents();
 });
+
+function loadEvents() {
+    fetch('/api/events')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('featured-events');
+            const sidebarContainer = document.getElementById('sidebar-events');
+            
+            if (data.featured && data.featured.length > 0) {
+                if(container) container.innerHTML = data.featured.map(event => createFeaturedEventCard(event)).join('');
+                if(sidebarContainer) sidebarContainer.innerHTML = data.featured.slice(0, 3).map(event => createSidebarEventCard(event)).join('');
+            } else if (data.recent && data.recent.length > 0) {
+                if(container) container.innerHTML = data.recent.slice(0, 4).map(event => createFeaturedEventCard(event)).join('');
+                if(sidebarContainer) sidebarContainer.innerHTML = data.recent.slice(0, 3).map(event => createSidebarEventCard(event)).join('');
+            } else {
+                const emptyMsg = `
+                    <div class="col-span-full text-center py-12 rounded-2xl bg-gray-800/30 border border-dashed border-gray-700">
+                         <p class="text-sm text-gray-500">No events found yet.</p>
+                    </div>
+                `;
+                if(container) container.innerHTML = emptyMsg;
+                if(sidebarContainer) sidebarContainer.innerHTML = `<p class="text-sm text-center text-gray-600 py-4 font-bold border-2 border-dashed border-gray-100 rounded-2xl p-4">No events found yet.</p>`;
+            }
+        })
+        .catch(error => { console.error(error); });
+}
+
+function createFeaturedEventCard(event) {
+    return `
+        <div class="group bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-white/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden hover:bg-gray-700/80">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+
+            <div class="flex items-center mb-6 relative">
+                 ${event.image_url ? `
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden shadow-sm mr-4 flex-shrink-0">
+                        <img src="${event.image_url}" alt="${event.title}" class="w-full h-full object-cover">
+                    </div>
+                ` : `
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-700 rounded-2xl flex items-center justify-center mr-4 shadow-sm flex-shrink-0">
+                        <span class="text-2xl font-bold text-white">${event.title.charAt(0)}</span>
+                    </div>
+                `}
+                <div>
+                    <h4 class="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors line-clamp-1">${event.title}</h4>
+                    <p class="text-sm font-medium text-gray-400">${new Date(event.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                </div>
+            </div>
+            
+            ${event.description ? `
+                <p class="text-sm text-gray-400 mb-4 line-clamp-2">${event.description}</p>
+            ` : ''}
+            
+            <div class="flex items-center justify-between pt-4 border-t border-gray-700/50 text-xs text-gray-500 font-medium">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-900/30 text-indigo-400 uppercase">
+                    Campus Event
+                </span>
+                <span>${new Date(event.created_at || event.event_date).toLocaleDateString()}</span>
+            </div>
+        </div>
+    `;
+}
 
 function loadAchievements() {
     fetch('/api/achievements')
@@ -493,6 +581,30 @@ function createRecentAchievementCard(achievement) {
                 <p class="text-xs text-gray-500 truncate">${achievement.exam_name}</p>
             </div>
         </div>
+    `;
+}
+
+function createSidebarEventCard(event) {
+    return `
+        <a href="/events/gallery" class="group flex items-center p-3 bg-gray-800/30 hover:bg-gray-700/60 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all duration-300 shadow-sm">
+            <div class="flex-shrink-0 h-12 w-12 rounded-xl overflow-hidden glass shadow-sm">
+                ${event.image_url ? 
+                    `<img src="${event.image_url}" alt="${event.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform shadow-md duration-500">` : 
+                    `<div class="w-full h-full bg-indigo-500 flex items-center justify-center text-white font-bold">${event.title.charAt(0)}</div>`
+                }
+            </div>
+            <div class="ml-4 flex-1 min-w-0">
+                <h4 class="text-sm font-bold text-gray-100 truncate group-hover:text-indigo-400 transition-colors">${event.title}</h4>
+                <div class="flex items-center mt-1">
+                    <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-tighter">📅 ${new Date(event.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric'})}</span>
+                </div>
+            </div>
+            <div class="ml-2 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+        </a>
     `;
 }
 </script>

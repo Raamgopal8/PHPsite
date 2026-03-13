@@ -26,6 +26,7 @@ class OfficialLinkController extends Controller {
     public function store() {
         $title = $_POST['title'] ?? '';
         $url = $_POST['url'] ?? '';
+        $category = $_POST['category'] ?? 'General';
 
         if (empty($title) || empty($url)) {
             // Handle error - maybe redirect back with error
@@ -33,7 +34,7 @@ class OfficialLinkController extends Controller {
              exit;
         }
 
-        if ($this->officialLink->create(['title' => $title, 'url' => $url])) {
+        if ($this->officialLink->create(['title' => $title, 'category' => $category, 'url' => $url])) {
              header('Location: /admin/dashboard?success=Link added successfully');
         } else {
              header('Location: /admin/dashboard?error=Failed to add link');

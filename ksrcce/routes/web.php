@@ -10,6 +10,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function() use ($rou
     Route::get('/exams', 'ExamController@index');
     Route::get('/exams/manage', 'ExamController@manage');
     Route::get('/exams/manage/{id}', 'ExamController@manage');
+    Route::get('/exams/edit', 'ExamController@edit');
+    Route::get('/exams/edit/{id}', 'ExamController@edit');
+    Route::post('/exams/update', 'ExamController@update');
+    Route::post('/exams/update/{id}', 'ExamController@update');
     Route::post('/exams/save', 'ExamController@save');
     Route::post('/exams/parse-questions', 'ExamController@parseQuestions');
 
