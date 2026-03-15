@@ -3,31 +3,100 @@
 $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
 ?>
 
-<div class="min-h-screen bg-transparent p-4 pt-6">
-    <div class="max-w-4xl mx-auto">
+<style>
+/* ── Take Exam Light UI ── */
+
+.exam-header-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 5.5rem; /* Adjusted for navbar */
+    z-index: 40;
+    margin-bottom: 2rem;
+}
+.question-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+.question-card:hover { border-color: #c7d2fe; }
+.option-label {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1.5px solid #f1f5f9;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.option-label:hover {
+    background: #eff6ff;
+    border-color: #3b82f6;
+}
+.option-label input:checked + span {
+    color: #1d4ed8;
+    font-weight: 700;
+}
+.option-label input:checked {
+    border-color: #3b82f6;
+    background-color: #3b82f6;
+}
+.timer-badge {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+}
+.progress-container {
+    height: 8px;
+    background: #f1f5f9;
+    border-radius: 99px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    transition: width 0.3s ease-out;
+}
+</style>
+
+<div class="p-4 pb-24">
+    <div class="max-w-4xl mx-auto pt-4">
+        
         <!-- Exam Header with Timer -->
-        <div class="bg-gray-800/60 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-sm mb-6">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                <div class="mb-4 md:mb-0">
-                    <h1 class="text-2xl font-bold text-white"><?= htmlspecialchars($exam['title'] ?? 'Exam') ?></h1>
-                    <p class="text-gray-300">Answer all questions before time runs out</p>
+        <div class="exam-header-card">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900" style="font-family:'Outfit',sans-serif;"><?= htmlspecialchars($exam['title'] ?? 'Competitive Mock Exam') ?></h1>
+                    <p class="text-sm text-slate-500 font-medium mt-1">Status: <span class="text-indigo-600 font-bold">In Progress</span></p>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="bg-red-900/20 text-red-400 px-4 py-2 rounded-lg border border-red-500/30 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span id="timer" class="font-mono text-lg font-bold"><?= sprintf('%02d:00', $examDuration) ?></span>
+                <div class="flex items-center gap-4">
+                    <div class="timer-badge flex items-center gap-2">
+                        <svg class="w-5 h-5 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span id="timer" class="text-lg"><?= sprintf('%02d:00', $examDuration) ?></span>
                     </div>
-                    <span id="question-counter" class="text-sm text-gray-400">
-                        <?= count($questions) ?> Questions
-                    </span>
                 </div>
             </div>
             
-            <!-- Progress Bar -->
-            <div class="mt-4 w-full bg-gray-700/50 rounded-full h-2.5">
-                <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-out shadow-lg shadow-blue-500/50" style="width: 100%"></div>
+            <div class="mt-8">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Time Remaining Progress</span>
+                    <span id="question-counter" class="text-[10px] font-black uppercase tracking-widest text-indigo-600">
+                        <?= count($questions) ?> Questions Total
+                    </span>
+                </div>
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-bar-fill" style="width: 100%"></div>
+                </div>
             </div>
         </div>
 
@@ -36,25 +105,26 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
             <input type="hidden" name="exam_id" value="<?= htmlspecialchars($exam['id']) ?>">
             
             <?php foreach($questions as $i => $q): ?>
-                <div class="bg-gray-800/60 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-sm hover:shadow-md transition-shadow duration-200">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-900/20 text-blue-400 flex items-center justify-center text-sm font-medium border border-blue-500/30">
+                <div class="question-card" id="q-<?= $q['id'] ?>">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black" style="font-family:'Outfit',sans-serif;">
                             <?= $i + 1 ?>
                         </div>
-                        <div class="ml-4 flex-1">
-                            <h3 class="text-lg font-medium text-white mb-4"><?= htmlspecialchars($q['question_text'] ?? '') ?></h3>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-800 mb-6 leading-relaxed"><?= htmlspecialchars($q['question_text'] ?? '') ?></h3>
                             
                             <?php if (!empty($q['question_image'])): ?>
-                                <div class="mb-4">
-                                    <img src="<?= htmlspecialchars($q['question_image']) ?>" alt="Question Image" class="max-w-full h-auto rounded-lg border border-white/10">
+                                <div class="mb-6 p-2 bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden">
+                                    <img src="<?= htmlspecialchars($q['question_image']) ?>" alt="Question Visual" class="w-full h-auto rounded-xl">
                                 </div>
                             <?php endif; ?>
 
-                            <div class="space-y-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <?php foreach((is_array($q['options']) ? $q['options'] : []) as $k => $opt): ?>
-                                    <label class="flex items-center p-3 rounded-lg border border-white/10 hover:bg-gray-700/50 cursor-pointer transition-colors duration-200 group">
-                                        <input type="radio" name="answers[<?= htmlspecialchars($q['id']) ?>]" value="<?= $k ?>" class="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-600 bg-gray-700">
-                                        <span class="ml-3 text-gray-300 group-hover:text-white transition-colors"><?= htmlspecialchars($opt) ?></span>
+                                    <label class="option-label group">
+                                        <input type="radio" name="answers[<?= htmlspecialchars($q['id']) ?>]" value="<?= $k ?>" 
+                                               class="w-5 h-5 text-indigo-600 border-slate-300 focus:ring-indigo-500 mr-3">
+                                        <span class="text-sm font-medium text-slate-600 group-hover:text-slate-900 transition-colors"><?= htmlspecialchars($opt) ?></span>
                                     </label>
                                 <?php endforeach; ?>
                             </div>
@@ -63,17 +133,26 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
                 </div>
             <?php endforeach; ?>
             
-            <div class="bg-gray-800/60 backdrop-blur-md rounded-2xl p-6 border border-white/10 shadow-sm mt-6">
-                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-                    <div class="text-sm text-gray-400">
-                        <span id="answered-count" class="text-white font-bold">0</span> of <?= count($questions) ?> questions answered
+            <!-- Bottom Action Bar -->
+            <div class="bg-white/80 backdrop-blur-xl border border-slate-200 rounded-3xl p-8 shadow-2xl sticky bottom-4 z-40">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-xl" style="font-family:'Outfit',sans-serif;">
+                            <span id="answered-count">0</span>
+                        </div>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-widest text-slate-400">Questions Answered</p>
+                            <p class="text-sm font-bold text-slate-700">Out of <?= count($questions) ?> total</p>
+                        </div>
                     </div>
-                    <div class="flex space-x-3">
-                        <button type="button" id="clear-all" class="px-4 py-2 border border-white/10 rounded-lg text-sm font-medium text-gray-300 bg-transparent hover:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                            Clear All
+                    <div class="flex gap-4 w-full sm:w-auto">
+                        <button type="button" id="clear-all" 
+                                class="flex-1 sm:flex-none px-6 py-3 rounded-2xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 active:scale-95 transition-all">
+                            Clear Choices
                         </button>
-                        <button type="submit" class="px-6 py-2 border border-transparent rounded-lg shadow-lg shadow-blue-500/20 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                            Submit Exam
+                        <button type="submit" 
+                                class="flex-1 sm:flex-none px-10 py-3 rounded-2xl bg-slate-900 text-white text-sm font-black shadow-xl hover:bg-indigo-600 active:scale-95 transition-all">
+                            Submit Examination
                         </button>
                     </div>
                 </div>
@@ -82,7 +161,6 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
     </div>
 </div>
 
-<!-- Timer and Auto-Submit Script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const timerDisplay = document.getElementById('timer');
@@ -91,70 +169,46 @@ document.addEventListener('DOMContentLoaded', function() {
     const answeredCount = document.getElementById('answered-count');
     const clearBtn = document.getElementById('clear-all');
     
-    // Set exam duration in minutes (from PHP)
-    const duration = <?= $examDuration * 60; ?>; // Convert to seconds
+    const duration = <?= $examDuration * 60; ?>;
     let timeLeft = duration;
     let timer;
     
-    // Update answered questions counter
     function updateAnsweredCount() {
         const answered = document.querySelectorAll('input[type="radio"]:checked').length;
         answeredCount.textContent = answered;
     }
     
-    // Format time as MM:SS
-    function formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-    
-    // Update timer display and progress bar
     function updateTimer() {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
         
-        // Update display
         timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         
-        // Update progress bar
         const progress = (timeLeft / duration) * 100;
         progressBar.style.width = `${progress}%`;
         
-        // Change color when time is running low
-        if (timeLeft <= 300) { // 5 minutes or less
-            progressBar.classList.remove('bg-blue-500');
-            progressBar.classList.add('bg-red-500');
-            progressBar.classList.add('shadow-red-500/50');
-            progressBar.classList.remove('shadow-blue-500/50');
-            
-            // Add animation when 1 minute or less
-            if (timeLeft <= 60) {
-                progressBar.classList.add('animate-pulse');
-            }
+        if (timeLeft <= 300) {
+            document.querySelector('.timer-badge').classList.add('bg-rose-50', 'text-rose-600', 'border-rose-100');
+            progressBar.style.background = 'linear-gradient(90deg, #f43f5e, #e11d48)';
         }
         
         if (timeLeft <= 0) {
             clearInterval(timer);
-            // Auto-submit the form when time is up
             examForm.submit();
         } else {
             timeLeft--;
         }
     }
     
-    // Start the timer
-    updateTimer(); // Initial call
+    updateTimer();
     timer = setInterval(updateTimer, 1000);
     
-    // Update answered count when radio buttons change
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', updateAnsweredCount);
     });
     
-    // Clear all selections
     clearBtn.addEventListener('click', function() {
-        if (confirm('Are you sure you want to clear all your answers?')) {
+        if (confirm('Clear all your answers? This cannot be undone.')) {
             document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
                 radio.checked = false;
             });
@@ -162,16 +216,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Warn before leaving the page
     window.addEventListener('beforeunload', function(e) {
         if (timeLeft > 0) {
             e.preventDefault();
-            e.returnValue = 'You have an ongoing exam. Are you sure you want to leave?';
+            e.returnValue = 'Unsaved changes! Are you sure you want to end the exam?';
             return e.returnValue;
         }
     });
     
-    // Initial count of answered questions
     updateAnsweredCount();
 });
 </script>

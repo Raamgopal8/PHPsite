@@ -1,167 +1,215 @@
 <?php $path = 'auth/register.php'; ?>
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-    <div class="w-full max-w-md">
-        <!-- Logo -->
-        <div class="text-center mb-8">
-            <a href="/" class="inline-flex items-center space-x-3">
-                <img src="/assets/KSR College of Engineering.jpg" alt="KSR College of Engineering" class="h-24 w-auto object-contain">
-                <div class="h-16 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
-                <img src="/assets/ccelogo.jpg" alt="CCE Department" class="h-16 w-auto object-contain">
-            </a>
-            <h1 class="mt-4 text-2xl font-bold text-gray-800">Create your account</h1>
-            <p class="mt-1 text-sm text-gray-600">Join us to start your learning journey</p>
+<style>
+/* ── Auth Page: Pure Light Theme ── */
+body {
+    background-image: url('/assets/background.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-color: var(--bg-primary) !important;
+}
+header, footer { display: none !important; }
+main { padding-top: 0 !important; margin-top: 0 !important; }
+body > main > div { padding-top: 0 !important; }
+
+/* Auth Card refinement - light glassmorphism */
+.auth-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-lg">
+
+        <!-- Branding -->
+        <div class="text-center mb-7">
+            <div class="inline-flex items-center justify-center gap-4 mb-5">
+                <!-- Standardized Logo Containers -->
+                <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 w-16 h-16 flex items-center justify-center">
+                    <img src="/assets/KSR College of Engineering.jpg" alt="KSR" class="max-h-full max-w-full object-contain">
+                </div>
+                <div class="h-8 w-px bg-slate-200"></div>
+                <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 w-16 h-16 flex items-center justify-center">
+                    <img src="/assets/ccelogo.jpg" alt="CCE" class="max-h-full max-w-full object-contain">
+                </div>
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 mb-1" style="font-family:'Outfit',sans-serif;letter-spacing:-0.02em;">Create Your Account</h1>
+            <p class="text-sm text-slate-500 font-medium">Join the KSR CCE community — it's free</p>
         </div>
 
-        <!-- Flash Messages -->
-        <?php if(!empty($_SESSION['flash']['error'])): ?>
-            <div class="mb-6 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 flex items-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                </svg>
-                <div><?= htmlspecialchars($_SESSION['flash']['error']); unset($_SESSION['flash']['error']); ?></div>
+        <!-- Card -->
+        <div class="auth-card p-10">
+
+            <!-- Step Indicator -->
+            <div class="flex items-center justify-between mb-8 px-1">
+                <?php foreach([['1','Identity'],['2','Academic'],['3','Security']] as $i => [$num,$label]): ?>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300"
+                         style="background:<?= $i < 2 ? 'linear-gradient(135deg,#6366f1,#4f46e5)' : '#f1f5f9' ?>; 
+                                color:<?= $i < 2 ? 'white' : '#64748b' ?>;
+                                border: 2px solid <?= $i < 2 ? 'rgba(99,102,241,0.2)' : '#e2e8f0' ?>;">
+                        <?= $num ?>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest <?= $i < 2 ? 'text-indigo-600' : 'text-slate-400' ?>"><?= $label ?></span>
+                </div>
+                <?php if($i < 2): ?>
+                <div class="flex-1 h-0.5 mx-4 rounded-full" style="background:<?= $i === 0 ? 'linear-gradient(90deg,#6366f1,#e0e7ff)' : '#f1f5f9' ?>;"></div>
+                <?php endif; ?>
+                <?php endforeach; ?>
             </div>
-        <?php endif; ?>
 
-        <!-- Register Form -->
-        <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-white/20">
-            <form action="/register" method="post" class="space-y-6" onsubmit="return validateEmailDomain()">
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
+            <!-- Error Flash -->
+            <?php if(!empty($_SESSION['flash']['error'])): ?>
+                <div class="mb-6 p-4 rounded-xl flex items-start gap-3 bg-red-50 border border-red-100">
+                    <svg class="h-5 w-5 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p class="text-red-700 text-sm font-medium"><?= htmlspecialchars($_SESSION['flash']['error']); unset($_SESSION['flash']['error']); ?></p>
+                </div>
+            <?php endif; ?>
+
+            <form action="/register" method="post" class="space-y-5" onsubmit="return validateEmailDomain()">
+
+                <!-- Identity Section -->
+                <div class="space-y-5">
+                    <!-- Full Name -->
+                    <div>
+                        <label for="name" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">Full Name</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                            </div>
+                            <input type="text" id="name" name="name" required class="light-input !pl-12" placeholder="e.g. Arjun Kumar">
                         </div>
-                        <input type="text" id="name" name="name" required 
-                            class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200"
-                            placeholder="John Doe">
                     </div>
-                </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">College Email</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            </div>
+                            <input type="email" id="email" name="email" required class="light-input !pl-12"
+                                placeholder="you@ksrce.ac.in"
+                                pattern="^[a-zA-Z0-9._%+-]+@(ksrce\.ac\.in|ksriet\.ac\.in)$"
+                                title="Please use your ksrce.ac.in or ksriet.ac.in email address">
                         </div>
-                        <input type="email" id="email" name="email" required 
-                            class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200"
-                            placeholder="you@ksrce.ac.in"
-                            pattern="^[a-zA-Z0-9._%+-]+@(ksrce\.ac\.in|ksriet\.ac\.in)$"
-                            title="Please use your ksrce.ac.in or ksriet.ac.in email address">
-                        <div id="email-error" class="mt-1 text-sm text-red-600 hidden">Please use your ksrce.ac.in or ksriet.ac.in email address</div>
+                        <div id="email-error" class="mt-2 text-xs text-red-600 hidden flex items-center gap-1 font-medium ml-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            Use your ksrce.ac.in or ksriet.ac.in email
+                        </div>
                     </div>
-                </div>
 
-                <div>
-                    <label for="college" class="block text-sm font-medium text-gray-700 mb-1">College</label>
-                    <select id="college" name="college" required class="block w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200">
-                        <option value="" disabled selected>Select your college</option>
-                        <option value="KSRCE">KSR College of Engineering (KSRCE)</option>
-                        <option value="KSRIET">KSR Institute for Engineering and Technology (KSRIET)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                    <input type="text" id="department" name="department" required 
-                        class="block w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200"
-                        placeholder="e.g. Computer Science (CSE)">
-                </div>
-
-                <div>
-                    <label for="year" class="block text-sm font-medium text-gray-700 mb-1">Year of Study</label>
-                    <select id="year" name="year" required class="block w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200">
-                        <option value="" disabled selected>Select year</option>
-                        <option value="1">1st Year</option>
-                        <option value="2">2nd Year</option>
-                        <option value="3">3rd Year</option>
-                        <option value="4">4th Year</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
+                    <!-- College + Year -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="college" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">College</label>
+                            <div class="relative">
+                                <select id="college" name="college" required class="light-input appearance-none">
+                                    <option value="" disabled selected>Select college</option>
+                                    <option value="KSRCE">KSRCE</option>
+                                    <option value="KSRIET">KSRIET</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
                         </div>
-                        <input type="password" id="password" name="password" required 
-                            class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg bg-white/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200"
-                            placeholder="••••••••">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <button type="button" id="toggle-password" class="text-gray-400 hover:text-gray-600 focus:outline-none">
-                                <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                <svg id="eye-slash-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                </svg>
+                        <div>
+                            <label for="year" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">Year</label>
+                            <div class="relative">
+                                <select id="year" name="year" required class="light-input appearance-none">
+                                    <option value="" disabled selected>Select year</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Department -->
+                    <div>
+                        <label for="department" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">Department</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                            </div>
+                            <input type="text" id="department" name="department" required class="light-input !pl-12" placeholder="e.g. Computer Science (CSE)">
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2.5 ml-1">Password</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            </div>
+                            <input type="password" id="password" name="password" required class="light-input !pl-12 !pr-14" placeholder="Minimum 8 characters">
+                            <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-indigo-600 transition-colors">
+                                <svg id="eye-icon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                <svg id="eye-slash-icon" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                             </button>
                         </div>
+                        <p class="mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-tighter ml-1">Use 8+ characters with mixed types</p>
                     </div>
-                    <p class="mt-1 text-xs text-gray-500">Use 8 or more characters with a mix of letters, numbers & symbols</p>
                 </div>
 
-                <div>
-                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5">
-                        Create Account
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
+                <!-- Submit Button -->
+                <button type="submit" class="w-full mt-6 py-4 px-6 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+                        style="background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
+                    Create My Account
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </button>
             </form>
 
-            <script>
-                function validateEmailDomain() {
-                    const email = document.getElementById('email').value;
-                    const emailError = document.getElementById('email-error');
-                    const isValid = /^[a-zA-Z0-9._%+-]+@(ksrce\.ac\.in|ksriet\.ac\.in)$/.test(email);
-                    
-                    if (!isValid) {
-                        emailError.classList.remove('hidden');
-                        return false;
-                    }
-                    emailError.classList.add('hidden');
-                    return true;
-                }
-                
-                // Also validate on input change to give immediate feedback
-                document.getElementById('email').addEventListener('input', function() {
-                    const emailError = document.getElementById('email-error');
-                    emailError.classList.add('hidden');
-                });
+            <!-- Divider -->
+            <div class="my-8 flex items-center gap-4">
+                <div class="flex-1 h-px bg-slate-100"></div>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">ALREADY REGISTERED?</span>
+                <div class="flex-1 h-px bg-slate-100"></div>
+            </div>
 
-                // Password toggle functionality
-                const togglePassword = document.getElementById('toggle-password');
-                const passwordInput = document.getElementById('password');
-                const eyeIcon = document.getElementById('eye-icon');
-                const eyeSlashIcon = document.getElementById('eye-slash-icon');
-
-                togglePassword.addEventListener('click', function() {
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        eyeIcon.classList.add('hidden');
-                        eyeSlashIcon.classList.remove('hidden');
-                    } else {
-                        passwordInput.type = 'password';
-                        eyeIcon.classList.remove('hidden');
-                        eyeSlashIcon.classList.add('hidden');
-                    }
-                });
-            </script>
-
-            <p class="mt-6 text-center text-sm text-gray-600">
-                Already have an account?
-                <a href="/login" class="font-medium text-blue-600 hover:text-blue-500">Sign in</a>
-            </p>
+            <a href="/login" class="block w-full py-3.5 rounded-xl text-sm font-bold text-center transition-all hover:bg-indigo-50 text-indigo-600 border border-indigo-100 bg-indigo-50/30">
+                Sign In Instead →
+            </a>
+        </div>
     </div>
 </div>
+    </div>
+</div>
+
+<script>
+function validateEmailDomain() {
+    const email = document.getElementById('email').value;
+    const emailError = document.getElementById('email-error');
+    const isValid = /^[a-zA-Z0-9._%+-]+@(ksrce\.ac\.in|ksriet\.ac\.in)$/.test(email);
+    if (!isValid) { emailError.classList.remove('hidden'); return false; }
+    emailError.classList.add('hidden');
+    return true;
+}
+document.getElementById('email').addEventListener('input', function() {
+    document.getElementById('email-error').classList.add('hidden');
+});
+const togglePassword = document.getElementById('toggle-password');
+const passwordInput  = document.getElementById('password');
+const eyeIcon        = document.getElementById('eye-icon');
+const eyeSlashIcon   = document.getElementById('eye-slash-icon');
+togglePassword.addEventListener('click', function() {
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text'; eyeIcon.classList.add('hidden'); eyeSlashIcon.classList.remove('hidden');
+    } else {
+        passwordInput.type = 'password'; eyeIcon.classList.remove('hidden'); eyeSlashIcon.classList.add('hidden');
+    }
+});
+</script>
