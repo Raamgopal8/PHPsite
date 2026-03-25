@@ -157,6 +157,7 @@ $routes = [
         '/api/updates' => 'ResultController@updates',
         '/api/official-links' => 'OfficialLinkController@getLinks',
         '/admin/official-links/delete/{id}' => 'OfficialLinkController@destroy',
+        '/admin/quick-links/all' => 'QuickLinkController@getAll',
     '/api/heartbeat' => 'AuthController@heartbeat', // Heartbeat route
 
         // Static Pages
@@ -199,7 +200,12 @@ $routes = [
         '/api/exam-countdowns/sync' => 'ExamCountdownController@syncCountdowns',
         // Question API
         '/api/questions/create' => 'QuestionController@createQuestion',
-        '/admin/official-links/store' => 'OfficialLinkController@store'
+        '/admin/official-links/store' => 'OfficialLinkController@store',
+        '/admin/quick-links/store' => 'QuickLinkController@store',
+        '/admin/quick-links/update/{id}' => 'QuickLinkController@update',
+        '/admin/quick-links/delete/{id}' => 'QuickLinkController@delete',
+        '/admin/quick-links/toggle/{id}' => 'QuickLinkController@toggleStatus',
+        '/admin/quick-links/reorder' => 'QuickLinkController@reorder'
     ]
 ];
 

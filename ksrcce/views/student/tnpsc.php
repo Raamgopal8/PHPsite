@@ -1,4 +1,4 @@
-<?php $path = 'student/tnspc.php'; ?>
+<?php $path = 'student/tnpsc.php'; ?>
 
 <?php
 $dashboardUrl = isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin' ? '/admin/dashboard' : '/student/dashboard';
@@ -122,7 +122,7 @@ $groups = [
                     <?php endforeach; ?>
                 </div>
             </div>
-            <div class="tnpsc-card p-8 bg-emerald-600 text-white border-none shadow-emerald-200">
+            <div class="tnpsc-card p-8 !bg-emerald-600 text-white border-none shadow-emerald-200">
                 <h3 class="text-xl font-black mb-4" style="font-family:'Outfit',sans-serif;">Exam Highlights</h3>
                 <div class="space-y-6">
                     <?php foreach([['3','Major Groups'],['Govt','State Jobs'],['300+','Annual Vacancies'],['TN','State Focus']] as $highlight): ?>

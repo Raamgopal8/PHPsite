@@ -67,8 +67,8 @@
                         <?php
                         try {
                             $db = (new \App\Core\App())->db;
-                            $stmt = $db->prepare("SELECT * FROM syllabi WHERE subject LIKE ? OR subject LIKE ? ORDER BY created_at DESC");
-                            $stmt->execute(['%Group 1%', '%TNPSC%']);
+                            $stmt = $db->prepare("SELECT * FROM syllabi WHERE subject LIKE ? ORDER BY created_at DESC");
+                            $stmt->execute(['%Group 1%']);
                             $syllabi = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             
                             if (!empty($syllabi)):
@@ -114,8 +114,8 @@
                         <?php
                         try {
                             $db = (new \App\Core\App())->db;
-                            $stmt = $db->prepare("SELECT * FROM materials WHERE category LIKE ? OR category LIKE ? ORDER BY created_at DESC");
-                            $stmt->execute(['%Group 1%', '%TNPSC%']);
+                            $stmt = $db->prepare("SELECT * FROM materials WHERE category LIKE ? ORDER BY created_at DESC");
+                            $stmt->execute(['%Group 1%']);
                             $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             
                             if (!empty($materials)):

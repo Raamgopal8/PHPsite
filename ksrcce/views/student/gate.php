@@ -153,7 +153,7 @@ $departments = [
                     <?php endforeach; ?>
                 </div>
             </div>
-            <div class="gate-card p-8 bg-indigo-600 text-white border-none shadow-indigo-200">
+            <div class="gate-card p-8 !bg-indigo-600 text-white border-none shadow-indigo-200">
                 <h3 class="text-xl font-black mb-4" style="font-family:'Outfit',sans-serif;">Quick Stats</h3>
                 <div class="space-y-6">
                     <?php foreach([['29+','Subjects'],['3 Years','Validity'],['100','Total Marks'],['Feb','Exam Month']] as $stat): ?>

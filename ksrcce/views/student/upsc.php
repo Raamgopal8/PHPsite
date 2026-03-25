@@ -142,7 +142,7 @@ $colorMap = [
                     <?php endforeach; ?>
                 </div>
             </div>
-            <div class="upsc-card p-8 bg-orange-600 text-white border-none shadow-orange-200">
+            <div class="upsc-card p-8 !bg-orange-600 text-white border-none shadow-orange-200">
                 <h3 class="text-xl font-black mb-4" style="font-family:'Outfit',sans-serif;">Exam Insights</h3>
                 <div class="space-y-6">
                     <?php foreach([['3','Stages'],['24+','Services'],['1M+','Aspirants'],['Annual','Cycle']] as $stat): ?>

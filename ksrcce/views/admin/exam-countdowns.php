@@ -2,29 +2,21 @@
 
 <style>
     .glass-sidebar {
-        background: rgba(17, 24, 39, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        background: #ffffff;
+        border-right: 1px solid #e5e7eb;
     }
     .glass-content {
-        background: rgba(17, 24, 39, 0.4); 
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: #f8fafc;
     }
     .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         transition: all 0.3s ease;
     }
     .glass-card:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
     .nav-item {
         position: relative;
@@ -65,87 +57,39 @@
     
     /* Modal Styles */
     .glass-modal {
-        background: rgba(17, 24, 39, 0.95);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     }
     .form-input {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
+        background: #f9fafb;
+        border: 1px solid #d1d5db;
+        color: #111827;
     }
     .form-input:focus {
-        background: rgba(255, 255, 255, 0.1);
+        background: #ffffff;
         border-color: #3b82f6;
+        ring: 2px solid #3b82f6;
     }
 </style>
 
-<div class="min-h-screen bg-[url('/assets/background.jpg')] bg-fixed bg-cover bg-center">
-    <div class="flex min-h-screen bg-gray-900/80 backdrop-blur-sm">
-        
-        <!-- Sidebar Navigation -->
-        <aside class="hidden lg:flex flex-col w-64 glass-sidebar fixed inset-y-0 left-0 z-40 pt-28 pb-6 overflow-y-auto">
-            <div class="px-6 mb-8">
-                <div class="flex items-center space-x-3 mb-6">
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
-                        <?= strtoupper(substr(htmlspecialchars($_SESSION['user']['name'] ?? 'A'), 0, 1)) ?>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-white"><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Admin') ?></h3>
-                        <p class="text-xs text-blue-400">Administrator</p>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="flex-1 px-4 space-y-2">
-                <a href="/admin/dashboard" class="nav-item flex items-center px-4 py-3 text-sm font-medium text-gray-300 rounded-xl hover:text-white">
-                    <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                    Overview
-                </a>
-                <a href="/admin/exams" class="nav-item flex items-center px-4 py-3 text-sm font-medium text-gray-300 rounded-xl hover:text-white">
-                    <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    Exams
-                </a>
-                <a href="/admin/events" class="nav-item <?= str_contains($_SERVER['REQUEST_URI'], '/admin/events') ? 'active' : 'text-gray-300' ?> flex items-center px-4 py-3 text-sm font-medium rounded-xl hover:text-white">
-                    <svg class="h-5 w-5 mr-3 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Events
-                </a>
-                <a href="/admin/exam-countdowns" class="nav-item active flex items-center px-4 py-3 text-sm font-medium text-white rounded-xl">
-                    <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Countdowns
-                </a>
-                <a href="/admin/achievements" class="nav-item flex items-center px-4 py-3 text-sm font-medium text-gray-300 rounded-xl hover:text-white">
-                    <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                    </svg>
-                    Achievements
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 lg:pl-64 flex flex-col min-w-0 overflow-x-hidden">
-            <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-                
-                <!-- Header -->
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 class="text-3xl font-bold text-white tracking-tight">Exam Countdowns</h1>
-                        <p class="mt-1 text-gray-400">Manage exam countdown timers for students</p>
-                    </div>
-                    <button onclick="openAddModal()" class="px-4 py-3 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25 flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        Add New Countdown
-                    </button>
-                </div>
+<div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm transition-all duration-300">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Exam Countdowns</h1>
+            <p class="mt-1 text-slate-500">Manage exam countdown timers for students</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="/admin/dashboard" class="px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                Back to Dashboard
+            </a>
+            <button onclick="openAddModal()" class="px-4 py-3 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Add New Countdown
+            </button>
+        </div>
+    </div>
 
                 <!-- Flash Messages -->
                 <?php if(!empty($_SESSION['flash']['success'])): ?>
@@ -167,19 +111,19 @@
                 <?php endif; ?>
 
                 <!-- Countdowns Table -->
-                <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="glass-card rounded-2xl overflow-hidden shadow-sm">
                     <div class="overflow-x-auto">
                         <table class="w-full">
-                            <thead class="bg-white/5">
+                            <thead class="bg-slate-50">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Exam Name</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Date & Time</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Target Audience</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Exam Name</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date & Time</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Target Audience</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-white/5" id="countdowns-table">
+                            <tbody class="divide-y divide-slate-100" id="countdowns-table">
                                 <?php if (empty($countdowns)): ?>
                                     <tr>
                                         <td colspan="5" class="px-6 py-12 text-center text-gray-500">
@@ -191,9 +135,9 @@
                                     </tr>
                                 <?php else: ?>
                                     <?php foreach ($countdowns as $countdown): ?>
-                                        <tr class="hover:bg-white/5 transition-colors">
+                                        <tr class="hover:bg-slate-50 transition-colors">
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-white"><?= htmlspecialchars($countdown['exam_name']) ?></div>
+                                                <div class="text-sm font-medium text-slate-900"><?= htmlspecialchars($countdown['exam_name']) ?></div>
                                                 <?php if ($countdown['description']): ?>
                                                     <div class="text-sm text-gray-500"><?= htmlspecialchars(substr($countdown['description'], 0, 50)) ?>...</div>
                                                 <?php endif; ?>
@@ -230,70 +174,67 @@
                         </table>
                     </div>
                 </div>
-            </div>
-        </main>
     </div>
-</div>
 
 <!-- Add/Edit Modal -->
-<div id="countdownModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+<div id="countdownModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto h-full w-full z-50 flex items-center justify-center">
     <div class="glass-modal m-4 p-6 w-full max-w-md rounded-2xl shadow-2xl relative">
-        <h3 class="text-xl font-bold text-white mb-6" id="modalTitle">Add Exam Countdown</h3>
+        <h3 class="text-xl font-bold text-slate-900 mb-6" id="modalTitle">Add Exam Countdown</h3>
         
         <form id="countdownForm">
             <input type="hidden" id="countdownId" name="id">
             
             <div class="space-y-4">
                 <div>
-                    <label for="examName" class="block text-sm font-medium text-gray-300 mb-1">Exam Name</label>
+                    <label for="examName" class="block text-sm font-medium text-slate-700 mb-1">Exam Name</label>
                     <input type="text" id="examName" name="exam_name" required
                         class="w-full px-4 py-2 rounded-xl form-input focus:outline-none transition-colors">
                 </div>
 
                 <div>
-                    <label for="examDate" class="block text-sm font-medium text-gray-300 mb-1">Exam Date</label>
+                    <label for="examDate" class="block text-sm font-medium text-slate-700 mb-1">Exam Date</label>
                     <input type="date" id="examDate" name="exam_date" required
                         class="w-full px-4 py-2 rounded-xl form-input focus:outline-none transition-colors">
                 </div>
 
                 <div>
-                    <label for="examTime" class="block text-sm font-medium text-gray-300 mb-1">Exam Time</label>
+                    <label for="examTime" class="block text-sm font-medium text-slate-700 mb-1">Exam Time</label>
                     <input type="time" id="examTime" name="exam_time" value="09:00"
                         class="w-full px-4 py-2 rounded-xl form-input focus:outline-none transition-colors">
                 </div>
 
                 <div>
-                    <label for="description" class="block text-sm font-medium text-gray-300 mb-1">Description</label>
+                    <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Description</label>
                     <textarea id="description" name="description" rows="3"
                         class="w-full px-4 py-2 rounded-xl form-input focus:outline-none transition-colors"></textarea>
                 </div>
 
                 <div>
-                    <label for="targetAudience" class="block text-sm font-medium text-gray-300 mb-1">Target Audience</label>
+                    <label for="targetAudience" class="block text-sm font-medium text-slate-700 mb-1">Target Audience</label>
                     <select id="targetAudience" name="target_audience"
                         class="w-full px-4 py-2 rounded-xl form-input focus:outline-none transition-colors">
-                        <option value="all" class="bg-gray-900 text-white">All Users</option>
-                        <option value="students" class="bg-gray-900 text-white">Students Only</option>
-                        <option value="admins" class="bg-gray-900 text-white">Admins Only</option>
+                        <option value="all" class="bg-white text-slate-900">All Users</option>
+                        <option value="students" class="bg-white text-slate-900">Students Only</option>
+                        <option value="admins" class="bg-white text-slate-900">Admins Only</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="flex items-center">
                         <input type="checkbox" id="isActive" name="is_active" checked
-                            class="mr-2 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-900">
-                        <span class="text-sm text-gray-300">Active</span>
+                            class="mr-2 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm text-slate-700">Active</span>
                     </label>
                 </div>
             </div>
 
             <div class="flex justify-end space-x-3 mt-8">
                 <button type="button" onclick="closeModal()" 
-                    class="px-4 py-2 bg-white/5 text-gray-300 rounded-xl hover:bg-white/10 transition-colors">
+                    class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors font-medium">
                     Cancel
                 </button>
                 <button type="submit" 
-                    class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25">
+                    class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25 font-medium">
                     Save
                 </button>
             </div>

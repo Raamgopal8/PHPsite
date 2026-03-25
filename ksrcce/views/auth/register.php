@@ -4,7 +4,8 @@
 /* ── Auth Page: Pure Light Theme ── */
 body {
     background-image: url('/assets/background.jpg') !important;
-    background-size: cover !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
     background-position: center !important;
     background-attachment: fixed !important;
     background-color: var(--bg-primary) !important;
@@ -183,6 +184,16 @@ body > main > div { padding-top: 0 !important; }
             <a href="/login" class="block w-full py-3.5 rounded-xl text-sm font-bold text-center transition-all hover:bg-indigo-50 text-indigo-600 border border-indigo-100 bg-indigo-50/30">
                 Sign In Instead →
             </a>
+            <div class="mt-4 text-center text-xs text-slate-500">
+                <p>Developed by <span class="text-blue-600 font-semibold">RAAMGOPAL S</span> — Dept of Computer Science and Engineering (2022–2026)</p>
+            </div>
+        </div>
+
+        <!-- Trust indicators -->
+        <div class="mt-10 flex items-center justify-center gap-5 text-xs text-slate-400 font-medium">
+            <span class="flex items-center gap-1"><span class="w-1 h-1 rounded-full bg-slate-300"></span> Secure Portal</span>
+            <span class="flex items-center gap-1"><span class="w-1 h-1 rounded-full bg-slate-300"></span> Free Access</span>
+            <span class="flex items-center gap-1"><span class="w-1 h-1 rounded-full bg-slate-300"></span> Smart Practice</span>
         </div>
     </div>
 </div>

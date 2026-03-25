@@ -4,7 +4,8 @@
 /* ── Auth Page: Pure Light Theme ── */
 body {
     background-image: url('/assets/background.jpg') !important;
-    background-size: cover !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
     background-position: center !important;
     background-attachment: fixed !important;
     background-color: var(--bg-primary) !important;
@@ -77,7 +78,7 @@ body > main > div { padding-top: 0 !important; }
                 <div>
                     <div class="flex items-center justify-between mb-2.5 ml-1">
                         <label for="password" class="block text-xs font-bold text-slate-500 uppercase tracking-widest">Password</label>
-                        <a href="#" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors uppercase tracking-wider">Forgot?</a>
+                        
                     </div>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">

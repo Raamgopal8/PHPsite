@@ -1,4 +1,19 @@
-<?php $path = 'admin/dashboard.php'; ?>
+<?php 
+$path = 'admin/dashboard.php';
+
+// Helper function for icon display
+function getIconForType($iconType) {
+    $icons = [
+        'link' => '🔗',
+        'book' => '📚',
+        'video' => '📹',
+        'download' => '⬇️',
+        'external' => '🌐',
+        'document' => '📄'
+    ];
+    return $icons[$iconType] ?? '🔗';
+}
+?>
 
 <style>
 /* ── Admin Light Design System (Aligned with Student) ──────────────── */
@@ -295,7 +310,8 @@
                                 <tr>
                                     <th class="text-left">Student</th>
                                     <th class="text-left">Details</th>
-                                    <th class="text-left">Time</th>
+                                    <th class="text-left">Login</th>
+                                    <th class="text-left">Logout/Status</th>
                                 </tr>
                             </thead>
                             <tbody id="recent-logins-body">
@@ -313,6 +329,19 @@
                                             <div class="text-slate-400 text-xs"><?= htmlspecialchars($login['college'] ?? '') ?></div>
                                         </td>
                                         <td class="text-slate-500 whitespace-nowrap"><?= date('M d, H:i', strtotime($login['login_time'])) ?></td>
+                                        <td class="whitespace-nowrap">
+                                            <?php if ($login['logout_time']): ?>
+                                                <span class="text-slate-500"><?= date('M d, H:i', strtotime($login['logout_time'])) ?></span>
+                                            <?php else: ?>
+                                                <?php 
+                                                $lastActivity = $login['last_activity'] ? strtotime($login['last_activity']) : strtotime($login['login_time']);
+                                                $isOnline = (time() - $lastActivity) < 300;
+                                                ?>
+                                                <span class="<?= $isOnline ? 'text-green-600 font-bold' : 'text-slate-400' ?>">
+                                                    <?= $isOnline ? 'Online' : 'Offline' ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
                                     </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -447,15 +476,19 @@
             <!-- ── Quick Links Manager ── -->
             <div class="admin-card p-6">
                 <h2 class="text-base font-black text-slate-900 mb-5" style="font-family:'Outfit',sans-serif;">Quick Links Manager</h2>
-                <form id="add-link-form" action="/admin/official-links/store" method="POST" class="flex flex-col md:flex-row gap-3 mb-5">
-                    <input type="text" name="title" placeholder="Title" required
+                
+                <!-- Add Quick Link Form -->
+                <form id="add-quicklink-form" class="flex flex-col md:flex-row gap-3 mb-5">
+                    <input type="text" name="title" placeholder="Link Title" required
                            class="flex-1 px-4 py-2.5 rounded-xl text-sm text-slate-900 font-medium transition-all"
                            style="background:#f8fafc;border:1px solid #e2e8f0;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e2e8f0'">
-                    <select name="category" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-700" style="background:#f8fafc;border:1px solid #e2e8f0;">
-                        <option value="GATE">GATE</option>
-                        <option value="Banking">Banking</option>
-                        <option value="UPSC">UPSC</option>
-                        <option value="TNPSC">TNPSC</option>
+                    <select name="icon" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-700" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                        <option value="link">🔗 Link</option>
+                        <option value="book">📚 Book</option>
+                        <option value="video">📹 Video</option>
+                        <option value="download">⬇️ Download</option>
+                        <option value="external">🌐 External</option>
+                        <option value="document">📄 Document</option>
                     </select>
                     <input type="url" name="url" placeholder="https://..." required
                            class="flex-1 px-4 py-2.5 rounded-xl text-sm text-slate-900 font-medium transition-all"
@@ -463,18 +496,38 @@
                     <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
                             style="background:linear-gradient(135deg,#6366f1,#4f46e5);box-shadow:0 4px 12px rgba(99,102,241,0.3);">Add Link</button>
                 </form>
-                <div id="link-message" class="text-sm text-center hidden mb-4"></div>
-                <div id="official-links-list" class="space-y-2 max-h-48 overflow-y-auto light-scrollbar">
-                    <?php if(empty($officialLinks)): ?>
-                        <div class="text-center text-slate-400 text-sm py-4">No links added yet.</div>
+                
+                <div id="quicklink-message" class="text-sm text-center hidden mb-4"></div>
+                
+                <!-- Quick Links List (Sortable) -->
+                <div id="quick-links-list" class="space-y-2 max-h-64 overflow-y-auto light-scrollbar">
+                    <?php if(empty($quickLinks)): ?>
+                        <div class="text-center text-slate-400 text-sm py-4">No quick links added yet.</div>
                     <?php else: ?>
-                        <?php foreach($officialLinks as $link): ?>
-                        <div class="flex items-center justify-between p-3 rounded-xl" style="background:#f8fafc;border:1px solid #e2e8f0;">
-                            <div class="min-w-0 flex-1 mr-3">
-                                <h4 class="text-sm font-bold text-slate-900 truncate"><?= htmlspecialchars($link['title']) ?></h4>
-                                <a href="<?= htmlspecialchars($link['url']) ?>" target="_blank" class="text-xs text-indigo-600 hover:underline truncate block"><?= htmlspecialchars($link['url']) ?></a>
+                        <?php foreach($quickLinks as $link): ?>
+                        <div class="quick-link-item" data-id="<?= $link['id'] ?>" style="cursor: move;">
+                            <div class="flex items-center justify-between p-3 rounded-xl transition-all" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                                <div class="flex items-center flex-1 mr-3">
+                                    <div class="drag-handle mr-3 text-slate-400 cursor-move">⋮⋮</div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <span class="quick-link-icon"><?= getIconForType($link['icon'] ?? 'link') ?></span>
+                                            <h4 class="quick-link-title text-sm font-bold text-slate-900"><?= htmlspecialchars($link['title']) ?></h4>
+                                            <?php if(!$link['is_active']): ?>
+                                                <span class="text-xs text-slate-400">(Inactive)</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <a href="<?= htmlspecialchars($link['url']) ?>" target="_blank" class="quick-link-url text-xs text-indigo-600 hover:underline truncate block mt-1"><?= htmlspecialchars($link['url']) ?></a>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="toggleQuickLink(<?= $link['id'] ?>)" class="p-1.5 rounded-lg transition-all text-xs font-medium <?= $link['is_active'] ? 'text-green-600 bg-green-100' : 'text-slate-400 bg-slate-100' ?>" title="<?= $link['is_active'] ? 'Deactivate' : 'Activate' ?>">
+                                        <?= $link['is_active'] ? '👁️' : '👁️‍🗨️' ?>
+                                    </button>
+                                    <button onclick="editQuickLink(<?= $link['id'] ?>)" class="p-1.5 rounded-lg bg-blue-100 text-blue-600 transition-all text-xs font-medium" title="Edit">✏️</button>
+                                    <button onclick="deleteQuickLink(<?= $link['id'] ?>)" class="p-1.5 rounded-lg bg-red-100 text-red-600 transition-all text-xs font-medium" title="Delete">🗑️</button>
+                                </div>
                             </div>
-                            <span class="text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0" style="background:#eef2ff;color:#4338ca;"><?= htmlspecialchars($link['category'] ?? 'General') ?></span>
                         </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -522,6 +575,40 @@ function updateResultsTable(results) {
     }).join('');
 }
 
+async function fetchLogins() {
+    try {
+        const response = await fetch('/api/admin/logins');
+        const logs = await response.json();
+        const tbody = document.getElementById('recent-logins-body');
+        
+        if (!logs || logs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-slate-400 text-xs">No activity found</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = logs.map(log => `
+            <tr style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:12px 20px;">
+                    <div style="font-weight:600;font-size:.82rem;color:#1e293b;">${log.name}</div>
+                    <div style="font-size:.7rem;color:#94a3b8;">${log.ip_address || ''}</div>
+                </td>
+                <td style="padding:12px 20px;font-size:.82rem;color:#475569;">
+                    <div>${log.year ? "Year " + log.year : ''} ${log.department || ''}</div>
+                    <div style="font-size:.7rem;color:#94a3b8;">${log.college || ''}</div>
+                </td>
+                <td style="padding:12px 20px;font-size:.72rem;color:#94a3b8;white-space:nowrap;">
+                    ${log.formatted_time}
+                </td>
+                <td style="padding:12px 20px;font-size:.82rem;white-space:nowrap;" class="${log.status_class || ''}">
+                    ${log.formatted_logout || ''}
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error fetching logins:', error);
+    }
+}
+
 async function fetchResults() {
     try {
         const btn = document.querySelector('button[onclick="fetchResults()"] svg');
@@ -540,6 +627,305 @@ async function fetchResults() {
     }
 }
 
+// Quick Links Management
+function getIconForType(iconType) {
+    const icons = {
+        'link': '🔗',
+        'book': '📚',
+        'video': '📹',
+        'download': '⬇️',
+        'external': '🌐',
+        'document': '📄'
+    };
+    return icons[iconType] || '🔗';
+}
+
+function showQuickLinkMessage(message, type = 'success') {
+    const messageEl = document.getElementById('quicklink-message');
+    messageEl.textContent = message;
+    messageEl.className = `text-sm text-center mb-4 ${type === 'success' ? 'text-green-600' : 'text-red-600'}`;
+    messageEl.classList.remove('hidden');
+    setTimeout(() => messageEl.classList.add('hidden'), 3000);
+}
+
+async function addQuickLink(formData) {
+    try {
+        const response = await fetch('/admin/quick-links/store', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            showQuickLinkMessage(result.message, 'success');
+            document.getElementById('add-quicklink-form').reset();
+            loadQuickLinks();
+        } else {
+            showQuickLinkMessage(result.message, 'error');
+        }
+    } catch (error) {
+        showQuickLinkMessage('Failed to add quick link', 'error');
+    }
+}
+
+async function updateQuickLink(id, formData) {
+    try {
+        const response = await fetch(`/admin/quick-links/update/${id}`, {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            showQuickLinkMessage(result.message, 'success');
+            loadQuickLinks();
+        } else {
+            showQuickLinkMessage(result.message, 'error');
+        }
+    } catch (error) {
+        showQuickLinkMessage('Failed to update quick link', 'error');
+    }
+}
+
+async function deleteQuickLink(id) {
+    if (!confirm('Are you sure you want to delete this quick link?')) return;
+    
+    try {
+        const response = await fetch(`/admin/quick-links/delete/${id}`, {
+            method: 'POST'
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            showQuickLinkMessage(result.message, 'success');
+            loadQuickLinks();
+        } else {
+            showQuickLinkMessage(result.message, 'error');
+        }
+    } catch (error) {
+        showQuickLinkMessage('Failed to delete quick link', 'error');
+    }
+}
+
+async function toggleQuickLink(id) {
+    try {
+        const response = await fetch(`/admin/quick-links/toggle/${id}`, {
+            method: 'POST'
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            showQuickLinkMessage(result.message, 'success');
+            loadQuickLinks();
+        } else {
+            showQuickLinkMessage(result.message, 'error');
+        }
+    } catch (error) {
+        showQuickLinkMessage('Failed to toggle quick link status', 'error');
+    }
+}
+
+function editQuickLink(id) {
+    const item = document.querySelector(`.quick-link-item[data-id="${id}"]`);
+    const titleEl = item.querySelector('.quick-link-title');
+    const urlEl = item.querySelector('.quick-link-url');
+    const iconEl = item.querySelector('.quick-link-icon');
+    
+    const currentTitle = titleEl.textContent;
+    const currentUrl = urlEl.href;
+    const currentIcon = iconEl.textContent;
+    
+    // Create edit form
+    const editForm = document.createElement('div');
+    editForm.className = 'edit-form p-3 rounded-xl bg-blue-50 border-2 border-blue-200';
+    editForm.innerHTML = `
+        <div class="space-y-3">
+            <input type="text" id="edit-title-${id}" value="${currentTitle}" class="w-full px-3 py-2 rounded-lg text-sm border border-blue-300" placeholder="Title">
+            <select id="edit-icon-${id}" class="w-full px-3 py-2 rounded-lg text-sm border border-blue-300">
+                <option value="link" ${currentIcon === '🔗' ? 'selected' : ''}>🔗 Link</option>
+                <option value="book" ${currentIcon === '📚' ? 'selected' : ''}>📚 Book</option>
+                <option value="video" ${currentIcon === '📹' ? 'selected' : ''}>📹 Video</option>
+                <option value="download" ${currentIcon === '⬇️' ? 'selected' : ''}>⬇️ Download</option>
+                <option value="external" ${currentIcon === '🌐' ? 'selected' : ''}>🌐 External</option>
+                <option value="document" ${currentIcon === '📄' ? 'selected' : ''}>📄 Document</option>
+            </select>
+            <input type="url" id="edit-url-${id}" value="${currentUrl}" class="w-full px-3 py-2 rounded-lg text-sm border border-blue-300" placeholder="https://...">
+            <div class="flex gap-2">
+                <button onclick="saveQuickLinkEdit(${id})" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Save</button>
+                <button onclick="cancelQuickLinkEdit(${id})" class="px-4 py-2 bg-slate-600 text-white rounded-lg text-sm font-medium hover:bg-slate-700">Cancel</button>
+            </div>
+        </div>
+    `;
+    
+    // Replace the content with edit form
+    const contentDiv = item.querySelector('.flex.items-center.justify-between');
+    contentDiv.style.display = 'none';
+    contentDiv.parentNode.appendChild(editForm);
+}
+
+function saveQuickLinkEdit(id) {
+    const title = document.getElementById(`edit-title-${id}`).value;
+    const url = document.getElementById(`edit-url-${id}`).value;
+    const icon = document.getElementById(`edit-icon-${id}`).value;
+    
+    if (!title || !url) {
+        alert('Title and URL are required');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('url', url);
+    formData.append('icon', icon);
+    
+    updateQuickLink(id, formData);
+}
+
+function cancelQuickLinkEdit(id) {
+    const item = document.querySelector(`.quick-link-item[data-id="${id}"]`);
+    const editForm = item.querySelector('.edit-form');
+    const contentDiv = item.querySelector('.flex.items-center.justify-between');
+    
+    if (editForm) editForm.remove();
+    contentDiv.style.display = 'flex';
+}
+
+async function loadQuickLinks() {
+    try {
+        const response = await fetch('/admin/quick-links/all');
+        const result = await response.json();
+        
+        if (result.success) {
+            updateQuickLinksList(result.data);
+        }
+    } catch (error) {
+        console.error('Error loading quick links:', error);
+    }
+}
+
+function updateQuickLinksList(links) {
+    const listEl = document.getElementById('quick-links-list');
+    
+    if (links.length === 0) {
+        listEl.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">No quick links added yet.</div>';
+        return;
+    }
+    
+    listEl.innerHTML = links.map(link => `
+        <div class="quick-link-item" data-id="${link.id}" style="cursor: move;">
+            <div class="flex items-center justify-between p-3 rounded-xl transition-all" style="background:#f8fafc;border:1px solid #e2e8f0;">
+                <div class="flex items-center flex-1 mr-3">
+                    <div class="drag-handle mr-3 text-slate-400 cursor-move">⋮⋮</div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="quick-link-icon">${getIconForType(link.icon ?? 'link')}</span>
+                            <h4 class="quick-link-title text-sm font-bold text-slate-900">${link.title}</h4>
+                            ${!link.is_active ? '<span class="text-xs text-slate-400">(Inactive)</span>' : ''}
+                        </div>
+                        <a href="${link.url}" target="_blank" class="quick-link-url text-xs text-indigo-600 hover:underline truncate block mt-1">${link.url}</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleQuickLink(${link.id})" class="p-1.5 rounded-lg transition-all text-xs font-medium ${link.is_active ? 'text-green-600 bg-green-100' : 'text-slate-400 bg-slate-100'}" title="${link.is_active ? 'Deactivate' : 'Activate'}">
+                        ${link.is_active ? '👁️' : '👁️‍🗨️'}
+                    </button>
+                    <button onclick="editQuickLink(${link.id})" class="p-1.5 rounded-lg bg-blue-100 text-blue-600 transition-all text-xs font-medium" title="Edit">✏️</button>
+                    <button onclick="deleteQuickLink(${link.id})" class="p-1.5 rounded-lg bg-red-100 text-red-600 transition-all text-xs font-medium" title="Delete">🗑️</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    initializeSortable();
+}
+
+function initializeSortable() {
+    const listEl = document.getElementById('quick-links-list');
+    let draggedItem = null;
+    
+    listEl.addEventListener('dragstart', (e) => {
+        if (e.target.classList.contains('quick-link-item')) {
+            draggedItem = e.target;
+            e.target.style.opacity = '0.5';
+        }
+    });
+    
+    listEl.addEventListener('dragend', (e) => {
+        if (e.target.classList.contains('quick-link-item')) {
+            e.target.style.opacity = '';
+        }
+    });
+    
+    listEl.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(listEl, e.clientY);
+        if (afterElement == null) {
+            listEl.appendChild(draggedItem);
+        } else {
+            listEl.insertBefore(draggedItem, afterElement);
+        }
+    });
+    
+    listEl.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        const linkIds = Array.from(listEl.querySelectorAll('.quick-link-item')).map(item => item.dataset.id);
+        await reorderQuickLinks(linkIds);
+    });
+}
+
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.quick-link-item:not(.dragging)')];
+    
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+async function reorderQuickLinks(linkIds) {
+    try {
+        const formData = new FormData();
+        formData.append('link_ids', JSON.stringify(linkIds));
+        
+        const response = await fetch('/admin/quick-links/reorder', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            showQuickLinkMessage('Quick links reordered successfully', 'success');
+        }
+    } catch (error) {
+        showQuickLinkMessage('Failed to reorder quick links', 'error');
+    }
+}
+
+// Initialize form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const addForm = document.getElementById('add-quicklink-form');
+    if (addForm) {
+        addForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            addQuickLink(formData);
+        });
+    }
+    
+    // Make quick link items draggable
+    document.querySelectorAll('.quick-link-item').forEach(item => {
+        item.draggable = true;
+    });
+    
+    initializeSortable();
+});
+
 function setupEventSource() {
     if (typeof eventSource !== 'undefined' && eventSource) eventSource.close();
     eventSource = new EventSource('/api/updates');
@@ -555,7 +941,11 @@ function setupEventSource() {
 
 document.addEventListener('DOMContentLoaded', function() {
     fetchResults();
+    fetchLogins();
     setupEventSource();
-    setInterval(fetchResults, 30000);
+    setInterval(() => {
+        fetchResults();
+        fetchLogins();
+    }, 30000);
 });
 </script>

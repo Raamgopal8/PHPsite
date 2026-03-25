@@ -37,6 +37,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function() use ($rou
     Route::post('/admin/official-links/store', 'OfficialLinkController@store');
     Route::get('/admin/official-links/delete/{id}', 'OfficialLinkController@destroy');
     
+    // Quick Links Routes
+    Route::post('/quick-links/store', 'QuickLinkController@store');
+    Route::post('/quick-links/update/{id}', 'QuickLinkController@update');
+    Route::post('/quick-links/delete/{id}', 'QuickLinkController@delete');
+    Route::post('/quick-links/toggle/{id}', 'QuickLinkController@toggleStatus');
+    Route::post('/quick-links/reorder', 'QuickLinkController@reorder');
+    Route::get('/quick-links/all', 'QuickLinkController@getAll');
+    
     // Existing API routes
     Route::get('/api/scores/stream', 'AdminController@streamScores');
 });

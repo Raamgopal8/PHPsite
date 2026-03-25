@@ -136,7 +136,7 @@ $colorMap = [
                     <?php endforeach; ?>
                 </div>
             </div>
-            <div class="banking-card p-8 bg-indigo-600 text-white border-none shadow-indigo-200">
+            <div class="banking-card p-8 !bg-indigo-600 text-white border-none shadow-indigo-200">
                 <h3 class="text-xl font-black mb-4" style="font-family:'Outfit',sans-serif;">Key Indicators</h3>
                 <div class="space-y-6">
                     <?php foreach([['11+','Public Sector Banks'],['SBI','Largest Recruiter'],['IBPS','Main Exam Body'],['Yearly','Cycle']] as $stat): ?>

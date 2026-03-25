@@ -49,6 +49,13 @@ class AdminController extends Controller {
             $officialLinks = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {}
 
+        // Fetch Quick Links
+        $quickLinks = [];
+        try {
+            $quickLinkModel = new \App\Models\QuickLink($this->db);
+            $quickLinks = $quickLinkModel->getAll();
+        } catch (\Exception $e) {}
+
         // Pass all data to the view at once
         $this->view('admin/dashboard.php', [
             'exams' => $exams,
@@ -58,7 +65,8 @@ class AdminController extends Controller {
             'recentResults' => $recentResults['data'] ?? [],
             'totalResults' => $recentResults['total'] ?? 0,
             'recentLogins' => $recentLogins,
-            'officialLinks' => $officialLinks
+            'officialLinks' => $officialLinks,
+            'quickLinks' => $quickLinks
         ]);
     
     }

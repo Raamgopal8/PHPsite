@@ -18,11 +18,9 @@
     <script src="//unpkg.com/alpinejs" defer></script>
     <style type="text/tailwindcss">
         html, body {
-            height: auto !important;
-            min-height: 0 !important;
+            min-height: 100vh;
             margin: 0;
             padding: 0;
-            overflow: visible !important;
         }
         body {
             @apply leading-relaxed;
@@ -468,16 +466,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const body = document.body;
         const html = document.documentElement;
         if (body) {
-            body.style.height = 'auto';
             body.style.minHeight = '100vh';
-            body.style.overflowY = 'visible';
-            body.style.overflowX = 'hidden';
             // Remove any potential scroll-lock classes
             body.classList.remove('antigravity-scroll-lock');
-        }
-        if (html) {
-            html.style.height = 'auto';
-            html.style.overflowY = 'visible';
         }
     };
     window.addEventListener('load', fixLayout);

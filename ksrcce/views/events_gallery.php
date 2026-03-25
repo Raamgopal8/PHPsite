@@ -1,143 +1,206 @@
 <?php $path = 'events_gallery.php'; ?>
+<div class="space-y-12">
+    <!-- Header -->
+    <div class="bg-gray-900/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10 text-center relative overflow-hidden group print:hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10"></div>
+        
+        <!-- Print Button -->
+        <button onclick="window.print()" class="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 transition-all duration-300 group/print z-20 flex items-center gap-2" title="Print this page">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400 group-hover/print:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            <span class="text-xs font-bold text-white opacity-0 group-hover/print:opacity-100 transition-opacity">PRINT</span>
+        </button>
 
-<style>
-/* ── Campus Events Light UI ── */
-body {
-    background-image: none !important;
-    background: var(--bg-primary) !important;
-}
-.events-hero {
-    background: linear-gradient(135deg, #312e81, #1e1b4b);
-    border-radius: 32px;
-    padding: 4rem 2rem;
-    color: white;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 4rem;
-}
-.event-card {
-    background: var(--surface-card);
-    border: 1px solid var(--border-color);
-    border-radius: 24px;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.event-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
-    border-color: #6366f1;
-}
-.date-badge {
-    background: #e0e7ff;
-    color: #4338ca;
-    border: 1px solid #c7d2fe;
-    padding: 6px 14px;
-    border-radius: 99px;
-    font-size: 0.75rem;
-    font-weight: 800;
-}
-.year-divider {
-    height: 2px;
-    background: linear-gradient(90deg, #e2e8f0, transparent);
-    flex: 1;
-}
-</style>
-
-<div class="min-h-screen p-6 pt-12">
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="events-hero shadow-2xl print:hidden">
-            <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 blur-[100px] -mr-48 -mt-48"></div>
-            <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 blur-[100px] -ml-48 -mb-48"></div>
-            
-            <div class="relative z-10">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 bg-white/10 border border-white/20 text-indigo-300">
-                    ✨ Life at Campus
-                </div>
-                <h1 class="text-4xl md:text-6xl font-black mb-6" style="font-family:'Outfit',sans-serif; letter-spacing:-0.03em;">
-                    Campus <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Events</span>
-                </h1>
-                <p class="text-slate-400 text-lg max-w-2xl mx-auto font-medium leading-relaxed">
-                    Relive the moments and explore the vibrant activities that make our campus come alive. Join us in celebrating our community.
-                </p>
-                
-                <button onclick="window.print()" class="mt-10 px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all flex items-center gap-2 mx-auto">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                    Print Events
-                </button>
-            </div>
-        </div>
-
-        <!-- Print Title -->
-        <div class="hidden print:block text-center border-b-2 border-slate-200 pb-8 mb-12">
-            <h1 class="text-4xl font-black text-slate-900">KSR COLLEGE EVENTS</h1>
-            <p class="text-slate-500 mt-2 font-bold uppercase tracking-widest">Gallery Snapshot - <?= date('F d, Y') ?></p>
-        </div>
-
-        <?php if(empty($eventsByYear)): ?>
-            <div class="text-center py-20 bg-white rounded-3xl border border-slate-200 shadow-sm">
-                <div class="text-6xl mb-4">📅</div>
-                <h3 class="text-xl font-black text-slate-900" style="font-family:'Outfit',sans-serif;">Stay Tuned for Updates</h3>
-                <p class="text-slate-500 mt-2">No events recorded yet. Check back soon for exciting news!</p>
-            </div>
-        <?php else: ?>
-            <?php foreach($eventsByYear as $year => $events): ?>
-                <div class="mb-20">
-                    <div class="flex items-center gap-6 mb-10">
-                        <h2 class="text-3xl font-black text-slate-900" style="font-family:'Outfit',sans-serif;"><?= htmlspecialchars($year) ?> Events</h2>
-                        <div class="year-divider"></div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        <?php foreach($events as $event): ?>
-                            <div class="event-card flex flex-col group">
-                                <div class="aspect-video relative overflow-hidden bg-slate-100">
-                                    <?php if($event['image_url']): ?>
-                                        <img src="<?= htmlspecialchars($event['image_url']) ?>" 
-                                             alt="<?= htmlspecialchars($event['title']) ?>" 
-                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                    <?php else: ?>
-                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-slate-100 text-indigo-200">
-                                            <svg class="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        </div>
-                                    <?php endif; ?>
-                                    
-                                    <div class="absolute bottom-4 left-4 z-20">
-                                        <div class="date-badge">
-                                            📅 <?= date('M d, Y', strtotime($event['event_date'])) ?>
-                                        </div>
-                                    </div>
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                </div>
-                                
-                                <div class="p-6 flex-1 flex flex-col">
-                                    <h3 class="text-xl font-black text-slate-900 mb-4 leading-tight group-hover:text-indigo-600 transition-colors" style="font-family:'Outfit',sans-serif;">
-                                        <?= htmlspecialchars($event['title']) ?>
-                                    </h3>
-                                    
-                                    <?php if($event['description']): ?>
-                                        <div class="mt-auto bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                                            <p class="text-xs text-slate-500 italic leading-relaxed line-clamp-3">
-                                                "<?= htmlspecialchars($event['description']) ?>"
-                                            </p>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
+        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 mb-4 relative z-10">Campus Events</h1>
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto relative z-10">Relive the moments and explore the vibrant activities that make our campus come alive.</p>
     </div>
+
+    <!-- Print-only Title -->
+    <div class="hidden print:block text-center border-b-2 border-gray-800 pb-6 mb-8">
+        <div class="flex items-center justify-center gap-6 mb-4">
+            <img src="/assets/KSR College of Engineering.jpg" alt="Logo" class="h-20 w-20 object-contain">
+            <div class="text-left">
+                <div class="text-2xl font-bold text-gray-900 uppercase tracking-widest mb-1">KSR COLLEGE OF ENGINEERING</div>
+                <div class="text-lg font-medium text-gray-600 uppercase">Tiruchengode</div>
+            </div>
+        </div>
+        <h1 class="text-3xl font-bold text-black border-t-2 border-gray-100 pt-4">CAMPUS EVENTS GALLERY</h1>
+        <p class="text-sm text-gray-500 mt-2 italic">Event history as of <?= date('F d, Y') ?></p>
+    </div>
+
+    <?php if(empty($eventsByYear)): ?>
+        <div class="text-center py-16 bg-gray-900/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-lg">
+            <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <h3 class="text-xl font-medium text-gray-400">No events recorded yet</h3>
+        </div>
+    <?php else: ?>
+        <?php foreach($eventsByYear as $year => $events): ?>
+            <div class="space-y-6">
+                <div class="flex items-center gap-4">
+                    <h2 class="text-3xl font-bold text-white"><?= htmlspecialchars($year) ?> Events</h2>
+                    <div class="h-px bg-gradient-to-r from-gray-700 to-transparent flex-1"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <?php foreach($events as $event): ?>
+                        <div class="bg-gray-800/60 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col">
+                            <?php if($event['image_url']): ?>
+                                <div class="h-56 w-full relative overflow-hidden bg-gray-900 flex-shrink-0">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent z-10"></div>
+                                    <img src="<?= htmlspecialchars($event['image_url']) ?>" alt="<?= htmlspecialchars($event['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute bottom-4 left-4 right-4 z-20 flex justify-between items-end">
+                                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-500 text-white shadow-lg select-none">
+                                            📅 <?= date('M d', strtotime($event['event_date'])) ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="h-56 w-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center relative flex-shrink-0">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent z-10"></div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-gray-600 relative z-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <div class="absolute bottom-4 left-4 right-4 z-20 flex justify-between items-end">
+                                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-500 text-white shadow-lg select-none">
+                                            📅 <?= date('M d', strtotime($event['event_date'])) ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <div class="p-6 flex-1 flex flex-col">
+                                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors line-clamp-2" title="<?= htmlspecialchars($event['title']) ?>">
+                                    <?= htmlspecialchars($event['title']) ?>
+                                </h3>
+
+                                <?php if($event['description'] || $event['event_date']): ?>
+                                    <div class="mt-auto bg-gray-900/50 rounded-xl p-4 border border-white/5 space-y-3">
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-xs uppercase font-bold tracking-wider text-gray-500">Event Date</span>
+                                            <span class="text-sm font-medium text-indigo-400"><?= date('F d, Y', strtotime($event['event_date'])) ?></span>
+                                        </div>
+                                        <?php if($event['description']): ?>
+                                            <div class="pt-3 border-t border-gray-700/50">
+                                                <p class="text-xs text-gray-400 line-clamp-3 italic" title="<?= htmlspecialchars($event['description']) ?>">
+                                                    "<?= htmlspecialchars($event['description']) ?>"
+                                                </p>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 
 <style>
-@media print {
-    header, footer, nav, .print\:hidden { display: none !important; }
-    body { background: white !important; }
-    .event-card { border: 1px solid #e2e8f0 !important; page-break-inside: avoid; }
-    .date-badge { border: 1px solid #d1d5db !important; background: #f3f4f6 !important; color: black !important; }
-}
+    @media print {
+        header, footer, .fixed, .bg-fixed, .print\:hidden {
+            display: none !important;
+        }
+        
+        body {
+            background: white !important;
+            color: black !important;
+            padding: 0 !important;
+        }
+
+        .min-h-screen {
+            min-height: auto !important;
+            padding: 0 !important;
+        }
+
+        .max-w-7xl {
+            max-width: 100% !important;
+        }
+
+        .gap-6 {
+            gap: 1.5rem !important;
+        }
+
+        .grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+
+        .bg-gray-800\/60, .bg-gray-900\/60, .bg-gray-900\/50, .bg-gray-900 {
+            background-color: white !important;
+            border-color: #e5e7eb !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+        }
+
+        .text-white, .text-gray-300, .text-gray-400 {
+            color: #1f2937 !important;
+        }
+
+        .text-indigo-400, .text-purple-500, .text-pink-500 {
+            color: black !important;
+            font-weight: bold !important;
+        }
+
+        .bg-indigo-500 {
+            background-color: #f3f4f6 !important;
+            border: 1px solid #d1d5db !important;
+            color: black !important;
+        }
+
+        .rounded-2xl, .rounded-3xl, .rounded-xl {
+            border-radius: 0.5rem !important;
+        }
+
+        .shadow-2xl, .shadow-lg, .shadow-md {
+            box-shadow: none !important;
+        }
+
+        .border-white\/10, .border-white\/5 {
+            border-color: #e5e7eb !important;
+        }
+
+        .h-56 {
+            height: 180px !important;
+        }
+
+        .p-6 {
+            padding: 1rem !important;
+        }
+
+        .space-y-12 {
+            margin-top: 0 !important;
+        }
+
+        /* Ensure images print well */
+        img {
+            max-width: 100% !important;
+            page-break-inside: avoid !important;
+            filter: grayscale(100%);
+        }
+
+        /* Hide the year background line and adjust typography */
+        .h-px {
+            background: #e5e7eb !important;
+        }
+
+        h2.text-3xl {
+            font-size: 1.5rem !important;
+            color: black !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        h3.text-xl {
+            font-size: 1.1rem !important;
+            margin-bottom: 0.25rem !important;
+        }
+        
+        .line-clamp-1, .line-clamp-2, .line-clamp-3 {
+            -webkit-line-clamp: unset !important;
+            display: block !important;
+        }
+    }
 </style>

@@ -50,12 +50,13 @@
                 <th>Year</th>
                 <th>IP Address</th>
                 <th>Login Time</th>
+                <th>Logout Time</th>
             </tr>
         </thead>
         <tbody>
             <?php if(empty($logins)): ?>
                 <tr>
-                    <td colspan="6" style="text-align: center; color: #6b7280;">No login records found</td>
+                    <td colspan="7" style="text-align: center; color: #6b7280;">No login records found</td>
                 </tr>
             <?php else: ?>
                 <?php foreach($logins as $login): ?>
@@ -69,6 +70,7 @@
                         <td><?= htmlspecialchars($login['year'] ?? 'N/A') ?></td>
                         <td><?= htmlspecialchars($login['ip_address'] ?? 'N/A') ?></td>
                         <td><?= date('M d, Y H:i:s', strtotime($login['login_time'])) ?></td>
+                        <td><?= $login['logout_time'] ? date('M d, Y H:i:s', strtotime($login['logout_time'])) : '-' ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
