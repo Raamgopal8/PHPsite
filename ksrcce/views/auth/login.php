@@ -9,6 +9,8 @@ body {
     background-position: center !important;
     background-attachment: fixed !important;
     background-color: var(--bg-primary) !important;
+    overflow: hidden !important;
+    height: 100vh !important;
 }
 header, footer { display: none !important; }
 main { padding-top: 0 !important; margin-top: 0 !important; }
@@ -25,7 +27,7 @@ body > main > div { padding-top: 0 !important; }
 }
 </style>
 
-<div class="min-h-screen flex items-center justify-center px-4 py-12">
+<div class="h-screen flex items-center justify-center px-4 py-6 overflow-hidden">
     <div class="w-full max-w-md">
 
         <!-- Branding -->
@@ -36,7 +38,7 @@ body > main > div { padding-top: 0 !important; }
                     <img src="/assets/KSR College of Engineering.jpg" alt="KSR" class="max-h-full max-w-full object-contain">
                 </div>
                 <div class="h-8 w-px bg-slate-200"></div>
-                <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 w-16 h-16 flex items-center justify-center">
+                <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 w-18 h-16 flex items-center justify-center">
                     <img src="/assets/ccelogo.jpg" alt="CCE" class="max-h-full max-w-full object-contain">
                 </div>
             </div>
@@ -78,7 +80,7 @@ body > main > div { padding-top: 0 !important; }
                 <div>
                     <div class="flex items-center justify-between mb-2.5 ml-1">
                         <label for="password" class="block text-xs font-bold text-slate-500 uppercase tracking-widest">Password</label>
-                        
+                        <a href="/forgot-password" class="text-xs font-bold text-indigo-600 hover:underline">Forgot Password?</a>
                     </div>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">

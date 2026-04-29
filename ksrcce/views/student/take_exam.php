@@ -62,14 +62,69 @@ $examDuration = isset($exam['duration']) ? (int)$exam['duration'] : 30;
     border-radius: 99px;
     overflow: hidden;
 }
-.progress-bar-fill {
+    .progress-bar-fill {
     height: 100%;
     background: linear-gradient(90deg, #6366f1, #8b5cf6);
     transition: width 0.3s ease-out;
 }
+
+/* Proctoring Overlay */
+#proctoring-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+}
+.proctoring-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 32px;
+    padding: 3rem;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.violation-flash {
+    animation: flash-red 0.5s infinite alternate;
+}
+@keyframes flash-red {
+    from { background-color: transparent; }
+    to { background-color: rgba(239, 68, 68, 0.2); }
+}
 </style>
 
-<div class="p-4 pb-24">
+<!-- Proctoring Overlay -->
+<div id="proctoring-overlay">
+    <div class="proctoring-card">
+        <div class="w-20 h-20 bg-indigo-500/20 rounded-3xl flex items-center justify-center mx-auto mb-8">
+            <svg class="w-10 h-10 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </div>
+        <h2 class="text-3xl font-black mb-4" style="font-family:'Outfit',sans-serif;">Proctoring Mode Active</h2>
+        <p class="text-slate-400 font-medium mb-8 leading-relaxed">
+            This exam is monitored. To ensure a fair assessment, the following rules apply:
+            <br><span class="text-indigo-400 font-bold">• Full-screen mode is mandatory</span>
+            <br><span class="text-indigo-400 font-bold">• Tab switching or exiting full-screen will auto-submit the exam</span>
+        </p>
+        <button id="start-proctoring" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-indigo-500/20 active:scale-95">
+            Start Exam Now
+        </button>
+    </div>
+</div>
+
+<div class="p-4 pb-24 blur-sm" id="exam-content">
     <div class="max-w-4xl mx-auto pt-4">
         
         <!-- Exam Header with Timer -->
@@ -168,11 +223,88 @@ document.addEventListener('DOMContentLoaded', function() {
     const examForm = document.getElementById('examForm');
     const answeredCount = document.getElementById('answered-count');
     const clearBtn = document.getElementById('clear-all');
+    const overlay = document.getElementById('proctoring-overlay');
+    const startBtn = document.getElementById('start-proctoring');
+    const examContent = document.getElementById('exam-content');
     
     const duration = <?= $examDuration * 60; ?>;
     let timeLeft = duration;
     let timer;
-    
+    let isExamStarted = false;
+
+    // Proctoring Logic
+    function enterFullscreen() {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+    }
+
+    function autoSubmit(reason) {
+        if (!isExamStarted) return;
+        
+        // Disable proctoring listeners to avoid multiple submissions
+        isExamStarted = false;
+        clearInterval(timer);
+        
+        // Show violation message
+        document.body.classList.add('violation-flash');
+        overlay.style.display = 'flex';
+        overlay.innerHTML = `
+            <div class="proctoring-card border-red-500/50">
+                <div class="w-20 h-20 bg-red-500/20 rounded-3xl flex items-center justify-center mx-auto mb-8">
+                    <svg class="w-10 h-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-black text-white mb-4" style="font-family:'Outfit',sans-serif;">Exam Terminated</h2>
+                <p class="text-red-400 font-bold mb-8">${reason}</p>
+                <p class="text-slate-400 mb-4">Auto-submitting your answers now...</p>
+                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                    <div class="bg-red-500 h-full animate-[progress_2s_ease-in-out]" style="width: 100%"></div>
+                </div>
+            </div>
+        `;
+
+        setTimeout(() => {
+            examForm.submit();
+        }, 3000);
+    }
+
+    startBtn.addEventListener('click', function() {
+        enterFullscreen();
+        overlay.style.display = 'none';
+        examContent.classList.remove('blur-sm');
+        isExamStarted = true;
+        startTimer();
+    });
+
+    // Detect Escape or Fullscreen Exit
+    document.addEventListener('fullscreenchange', function() {
+        if (!document.fullscreenElement && isExamStarted) {
+            autoSubmit('Violation: Exited Full-screen Mode');
+        }
+    });
+
+    // Detect Tab Switch / Window Blur
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden' && isExamStarted) {
+            autoSubmit('Violation: Tab Switch Detected');
+        }
+    });
+
+    window.addEventListener('blur', function() {
+        if (isExamStarted) {
+            autoSubmit('Violation: Focus Lost (Tab switch or Window change)');
+        }
+    });
+
     function updateAnsweredCount() {
         const answered = document.querySelectorAll('input[type="radio"]:checked').length;
         answeredCount.textContent = answered;
@@ -200,8 +332,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    updateTimer();
-    timer = setInterval(updateTimer, 1000);
+    function startTimer() {
+        updateTimer();
+        timer = setInterval(updateTimer, 1000);
+    }
     
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', updateAnsweredCount);
@@ -217,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     window.addEventListener('beforeunload', function(e) {
-        if (timeLeft > 0) {
+        if (timeLeft > 0 && isExamStarted) {
             e.preventDefault();
             e.returnValue = 'Unsaved changes! Are you sure you want to end the exam?';
             return e.returnValue;

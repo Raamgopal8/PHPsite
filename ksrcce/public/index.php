@@ -3,6 +3,11 @@
 // ✅ absolutely NO whitespace before this line
 ob_start();  // Start buffering before ANY output
 
+// Production security: Disable direct error display
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
+
 // Set timezone to IST
 date_default_timezone_set('Asia/Kolkata');
 
@@ -69,11 +74,6 @@ $routes = [
         '/login' => 'AuthController@login',
         '/register' => 'AuthController@register',
         '/logout' => 'AuthController@logout',
-        '/admin/password-view' => 'PasswordViewController@index',
-        '/admin/password-view/decrypt' => 'PasswordViewController@decryptSingle',
-        '/admin/password-view/export' => 'PasswordViewController@exportPasswords',
-        '/admin/setup' => 'AdminSetupController@index',
-        '/admin/setup/create' => 'AdminSetupController@createAdmin',
         '/student/dashboard' => 'ExamController@studentDashboard',
         '/student/exams' => 'ExamController@listExams',
         '/student/gate' =>'ExamController@showGatepage',
@@ -119,6 +119,7 @@ $routes = [
         '/student/tnpsc/group4' => 'ExamController@showGroup4page',
         '/student/take' => 'ExamController@takeExam',
         '/admin/dashboard' => 'AdminController@dashboard',
+        '/admin/available' => 'AdminController@available',
         '/admin/exams' => 'ExamController@index',
         '/admin/exams/create' => 'AdminController@createExam',
         '/admin/exams/edit' => 'ExamController@edit',
@@ -139,6 +140,7 @@ $routes = [
         '/materials' => 'MaterialController@list',
         '/admin/exam-countdowns' => 'ExamCountdownController@index',
         '/admin/achievements' => 'AchievementController@index',
+        '/admin/category/{domain}' => 'AdminController@categoryDashboard',
         '/admin/add-question' => 'QuestionController@showAddQuestionForm',
         // API endpoints
         '/api/exam-countdowns' => 'ExamCountdownController@getCountdowns',
@@ -163,11 +165,14 @@ $routes = [
         // Static Pages
         '/privacy-policy' => 'PageController@privacy',
         '/terms-of-service' => 'PageController@terms',
+
+        // Forgot Password
+        '/forgot-password' => 'ResetPasswordController@showForgotForm',
+        '/reset-password' => 'ResetPasswordController@showResetForm',
     ],
     'POST' => [
         '/login' => 'AuthController@postLogin',
         '/register' => 'AuthController@postRegister',
-        '/admin/setup/create' => 'AdminSetupController@createAdmin',
         '/exam/submit' => 'ExamController@submitExam',
         '/admin/exams/create' => 'AdminController@postCreateExam',
         '/admin/exams/update' => 'ExamController@update',
@@ -205,7 +210,11 @@ $routes = [
         '/admin/quick-links/update/{id}' => 'QuickLinkController@update',
         '/admin/quick-links/delete/{id}' => 'QuickLinkController@delete',
         '/admin/quick-links/toggle/{id}' => 'QuickLinkController@toggleStatus',
-        '/admin/quick-links/reorder' => 'QuickLinkController@reorder'
+        '/admin/quick-links/reorder' => 'QuickLinkController@reorder',
+        
+        // Forgot Password
+        '/forgot-password' => 'ResetPasswordController@sendResetLink',
+        '/reset-password' => 'ResetPasswordController@resetPassword',
     ]
 ];
 

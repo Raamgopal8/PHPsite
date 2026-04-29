@@ -71,6 +71,13 @@ class AdminController extends Controller {
     
     }
 
+    public function available() {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            header('Location: /login'); exit;
+        }
+        $this->view('admin/available.php');
+    }
+
     public function getRecentLogins() {
         if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
             http_response_code(403);
@@ -230,5 +237,21 @@ class AdminController extends Controller {
         $results = $resultsData['data'] ?? [];
         
         $this->view('admin/print_scores.php', ['results' => $results]);
+    }
+
+    public function categoryDashboard() {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            header('Location: /login'); exit;
+        }
+
+        $domain = $_GET['domain'] ?? '';
+        if (empty($domain)) {
+            $this->redirect('/admin/dashboard');
+            return;
+        }
+
+        $this->view('admin/category_dashboard.php', [
+            'domain' => $domain
+        ]);
     }
 }

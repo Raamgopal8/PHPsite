@@ -31,8 +31,10 @@ COPY . /var/www/html
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage
+# Set permissions and create storage directories
+RUN mkdir -p storage/sessions storage/logs storage/cache \
+    && chown -R www-data:www-data /var/www/html/storage \
+    && chmod -R 775 /var/www/html/storage
 
 EXPOSE 9000
 CMD ["php-fpm"]

@@ -30,7 +30,7 @@
                 <section class="bg-indigo-50 p-8 rounded-3xl border border-indigo-100">
                     <h2 class="text-xl font-black text-indigo-900 mb-4" style="font-family:'Outfit',sans-serif;">5. Contact Us</h2>
                     <p class="text-indigo-800">If you have any questions about this Privacy Policy, please contact our administration at:</p>
-                    <a href="mailto:headcce@ksrce.ac.in" class="inline-block mt-4 text-indigo-600 font-black hover:underline underline-offset-4">headcce@ksrce.ac.in</a>
+                    <a href="mailto:headcce@ksrce.ac.in" target="_blank" class="inline-block mt-4 text-indigo-600 font-black hover:underline underline-offset-4">headcce@ksrce.ac.in</a>
                 </section>
             </div>
         </div>

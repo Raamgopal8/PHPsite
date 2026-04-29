@@ -12,20 +12,18 @@ class Database
     {
         if (self::$connection === null) {
             // Get database configuration from environment variables
-            $host = $_ENV['DB_HOST'] ?? 'localhost';
+            $host = $_ENV['DB_HOST'] ?? null;
             $port = $_ENV['DB_PORT'] ?? '3306';
-            $dbname = $_ENV['DB_DATABASE'] ?? 'cce';
-            $username = $_ENV['DB_USERNAME'] ?? 'root';
+            $dbname = $_ENV['DB_DATABASE'] ?? null;
+            $username = $_ENV['DB_USERNAME'] ?? null;
             $password = $_ENV['DB_PASSWORD'] ?? '';
 
+            if (!$host || !$dbname || !$username) {
+                die("Critical Error: Database configuration missing in .env (DB_HOST, DB_DATABASE, or DB_USERNAME).\n");
+            }
+
             try {
-                // Force TCP/IP connection by using 127.0.0.1 instead of localhost
-                $host = ($host === 'localhost') ? '127.0.0.1' : $host;
-                
-                // Add socket configuration if needed (uncomment and set the correct path if using sockets)
-                // $socket = '/var/run/mysqld/mysqld.sock'; // Common path on Linux
-                // $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4;unix_socket={$socket}";
-                
+                // Ensure we use the exact host provided, no localhost -> 127.0.0.1 mapping which can be confusing in containers
                 $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4";
                 
                 $options = [
@@ -35,15 +33,14 @@ class Database
                     PDO::ATTR_PERSISTENT         => false,
                 ];
 
-                // Local MySQL connection - no SSL needed
-                error_log("Connecting to local MySQL: {$host}:{$port}");
                 self::$connection = new PDO($dsn, $username, $password, $options);
                 // Set timezone to IST
                 self::$connection->exec("SET time_zone = '+05:30'");
-                error_log("Successfully connected to MySQL and set timezone to IST");
                 
             } catch (PDOException $e) {
-                die("MySQL Connection Error: " . $e->getMessage() . "\n");
+                // Security: Don't reveal full error details in die() for production
+                error_log("Database Connection Error: " . $e->getMessage());
+                die("A database error occurred. Please try again later.\n");
             }
         }
         

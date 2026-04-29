@@ -45,7 +45,7 @@
                 
                 <div>
                     <h1 class="text-3xl md:text-4xl font-black" style="font-family:'Outfit',sans-serif;">Civil Services Examination (CSE) 2026</h1>
-                    <p class="mt-2 text-indigo-100 font-medium">For IAS, IPS, IFS, and Central Services Group A/B (Prelims: May 24, 2026; Mains: Aug 21, 2026)</p>
+                    <p class="mt-2 text-indigo-100 font-medium">For IAS, IPS, IFS, and Central Services Group A/B</p>
                 </div>
             </div>
         </div>

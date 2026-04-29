@@ -134,13 +134,7 @@ function getIconForType($iconType) {
                         </h1>
                         <p class="mt-1 text-sm text-slate-500">Welcome back, <span class="font-bold text-indigo-600"><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Admin') ?></span> · <?= date('l, d M Y') ?></p>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <a href="/admin/exams/create" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
-                           style="background:linear-gradient(135deg,#6366f1,#4f46e5);box-shadow:0 4px 14px rgba(99,102,241,0.35);">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                            New Exam
-                        </a>
-                    </div>
+                    <a href="/admin/available" class="bg-blue-500 text-white px-4 py-2 rounded-xl font-bold hover:bg-blue-600">Manage Departments</a>
                 </div>
             </div>
 
@@ -214,47 +208,31 @@ function getIconForType($iconType) {
                 </div>
             </div>
 
-            <!-- ── Domain Management Banner ── -->
-            <div class="admin-card p-7 mb-8 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-full pointer-events-none" style="background:linear-gradient(135deg,#eef2ff,#f5f3ff);clip-path:ellipse(100% 100% at 100% 50%);"></div>
-                <div class="relative flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="flex-1">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3" style="background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe;">
-                            ⚙️ Manage Competitive Content
+            <!-- ── Competitive Content Management Grid ── -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-black text-slate-900" style="font-family:'Outfit',sans-serif;">Competitive Content Management</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <?php
+                    $adminDomains = [
+                        ['name'=>'GATE','image'=>'/assets/gate.png','url'=>'/admin/category/GATE','color'=>'#eff6ff','iconColor'=>'#2563eb','desc'=>'Engineering Graduate Aptitude'],
+                        ['name'=>'TNPSC','image'=>'/assets/tnpsc.png','url'=>'/admin/category/TNPSC','color'=>'#f0fdf4','iconColor'=>'#16a34a','desc'=>'Tamil Nadu Public Service'],
+                        ['name'=>'Banking','image'=>'/assets/Bank.png','url'=>'/admin/category/Banking','color'=>'#eef2ff','iconColor'=>'#4f46e5','desc'=>'IBPS, SBI & RBI Exams'],
+                        ['name'=>'UPSC','image'=>'/assets/upsc.jpeg','url'=>'/admin/category/UPSC','color'=>'#fff7ed','iconColor'=>'#ea580c','desc'=>'Civil Services & NDA']
+                    ];
+                    foreach($adminDomains as $d): ?>
+                    <a href="<?= $d['url'] ?>" class="admin-card p-5 flex flex-col items-center text-center group transition-all hover:-translate-y-1 hover:shadow-md">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110" style="background:<?= $d['color'] ?>;">
+                            <img src="<?= $d['image'] ?>" alt="<?= $d['name'] ?>" class="w-10 h-10 object-contain">
                         </div>
-                        <h2 class="text-2xl font-black text-slate-900 mb-1" style="font-family:'Outfit',sans-serif;">Centralized Control</h2>
-                        <p class="text-sm text-slate-500 mb-4">Manage GATE, TNPSC, Banking, and UPSC syllabus and materials.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <?php
-                            $domains = [
-                                ['name'=>'GATE','image'=>'/assets/gate.png','url'=>'/student/gate','color'=>'#dbeafe','tc'=>'#1d4ed8'],
-                                ['name'=>'TNPSC','image'=>'/assets/tnpsc.png','url'=>'/student/tnpsc','color'=>'#dcfce7','tc'=>'#15803d'],
-                                ['name'=>'Banking','image'=>'/assets/Bank.png','url'=>'/student/banking','color'=>'#e0e7ff','tc'=>'#4338ca'],
-                                ['name'=>'UPSC','image'=>'/assets/upsc.jpeg','url'=>'/student/upsc','color'=>'#ffedd5','tc'=>'#c2410c'],
-                            ];
-                            foreach($domains as $d): ?>
-                            <a href="<?= $d['url'] ?>" class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5"
-                               style="background:<?= $d['color'] ?>;color:<?= $d['tc'] ?>;border:1px solid <?= $d['tc'] ?>22;">
-                                <div class="w-5 h-5 rounded overflow-hidden flex-shrink-0">
-                                    <img src="<?= $d['image'] ?>" alt="<?= $d['name'] ?>" class="w-full h-full object-cover">
-                                </div>
-                                <?= $d['name'] ?>
-                            </a>
-                            <?php endforeach; ?>
+                        <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors"><?= $d['name'] ?></h3>
+                        <p class="text-xs text-slate-400 mt-1"><?= $d['desc'] ?></p>
+                        <div class="mt-4 flex items-center text-[10px] font-bold text-indigo-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
+                            Manage Content →
                         </div>
-                    </div>
-                    <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
-                        <a href="/admin/syllabi" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
-                           style="background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 4px 14px rgba(59,130,246,0.3);">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                            Syllabus
-                        </a>
-                        <a href="/admin/materials" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
-                           style="background:linear-gradient(135deg,#6366f1,#4f46e5);box-shadow:0 4px 14px rgba(99,102,241,0.3);">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                            Materials
-                        </a>
-                    </div>
+                    </a>
+                    <?php endforeach; ?>
                 </div>
             </div>
 

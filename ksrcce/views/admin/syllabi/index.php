@@ -3,14 +3,11 @@
 <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-sm">
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900">Syllabus Management</h2>
-            <p class="text-gray-500 text-sm mt-1">Manage all syllabus content</p>
+            <h2 class="text-2xl font-bold text-gray-900"><?= isset($_GET['domain']) ? htmlspecialchars($_GET['domain']) . ' ' : '' ?>Syllabus Management</h2>
+            <p class="text-gray-500 text-sm mt-1">Manage <?= isset($_GET['domain']) ? 'curriculum specifically for ' . htmlspecialchars($_GET['domain']) : 'all syllabus content' ?></p>
         </div>
         <div class="flex space-x-3">
-            <a href="/admin/dashboard" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                Back to Dashboard
-            </a>
-            <a href="/admin/syllabi/create" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm">
+            <a href="/admin/syllabi/create<?= isset($_GET['domain']) ? '?domain=' . urlencode($_GET['domain']) : '' ?>" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm">
                 Add Link
             </a>
         </div>

@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../includes/header.php'; ?>
+
 
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
@@ -67,5 +67,3 @@
         </div>
     </div>
 </div>
-
-<?php include __DIR__ . '/../includes/footer.php'; ?>

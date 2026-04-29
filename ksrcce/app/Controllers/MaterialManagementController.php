@@ -11,11 +11,17 @@ class MaterialManagementController extends Controller {
             exit;
         }
 
-        $stmt = $this->db->prepare("SELECT * FROM materials ORDER BY created_at DESC");
-        $stmt->execute();
+        $domain = $_GET['domain'] ?? null;
+        if ($domain) {
+            $stmt = $this->db->prepare("SELECT * FROM materials WHERE domain = ? ORDER BY created_at DESC");
+            $stmt->execute([$domain]);
+        } else {
+            $stmt = $this->db->prepare("SELECT * FROM materials ORDER BY created_at DESC");
+            $stmt->execute();
+        }
         $materials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        $this->view('admin/materials/index.php', ['materials' => $materials]);
+        $this->view('admin/materials/index.php', ['materials' => $materials, 'domain' => $domain]);
     }
 
     public function create() {

@@ -12,11 +12,17 @@ class SyllabusManagementController extends Controller {
             exit;
         }
 
-        $stmt = $this->db->prepare("SELECT * FROM syllabi ORDER BY created_at DESC");
-        $stmt->execute();
+        $domain = $_GET['domain'] ?? null;
+        if ($domain) {
+            $stmt = $this->db->prepare("SELECT * FROM syllabi WHERE domain = ? ORDER BY created_at DESC");
+            $stmt->execute([$domain]);
+        } else {
+            $stmt = $this->db->prepare("SELECT * FROM syllabi ORDER BY created_at DESC");
+            $stmt->execute();
+        }
         $syllabi = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        $this->view('admin/syllabi/index.php', ['syllabi' => $syllabi]);
+        $this->view('admin/syllabi/index.php', ['syllabi' => $syllabi, 'domain' => $domain]);
     }
 
     public function create() {
